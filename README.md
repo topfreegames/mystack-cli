@@ -1,2 +1,2 @@
-# kubecos-cli
-The CLI for kubecos
+# kubecofs
+Personal cluster of services on kubernetes
