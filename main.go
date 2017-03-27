@@ -7,7 +7,7 @@
 
 package main
 
-import "github.com/topfreegames/kubecos/cmd"
+import "github.com/topfreegames/kubecos/kubecos-cli/cmd"
 
 func main() {
 	cmd.Execute(cmd.RootCmd)
