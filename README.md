@@ -1,2 +1,4 @@
-# kubecos-cli
+mystack-cli
+===========
+
 The CLI for kubecos
