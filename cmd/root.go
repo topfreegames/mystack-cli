@@ -1,5 +1,5 @@
-// kubecos
-// https://github.com/topfreegames/kubecos
+// mystack
+// https://github.com/topfreegames/mystack
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -14,17 +14,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Verbose determines how verbose kubecos wll run under
+// Verbose determines how verbose mystack wll run under
 var Verbose int
 
-// RootCmd is the root command for kubecos CLI application
+// RootCmd is the root command for mystack CLI application
 var RootCmd = &cobra.Command{
-	Use:   "kubecos",
-	Short: "kubecos handles manages your personal cluster",
-	Long:  `Use kubecos to start your services on kubernetes.`,
+	Use:   "mystack",
+	Short: "mystack handles manages your personal cluster",
+	Long:  `Use mystack to start your services on kubernetes.`,
 }
 
-// Execute runs RootCmd to initialize kubecos CLI application
+// Execute runs RootCmd to initialize mystack CLI application
 func Execute(cmd *cobra.Command) {
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)

@@ -5,8 +5,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/topfreegames/kubecos/kubecos-cli/api"
-	"github.com/topfreegames/kubecos/kubecos-cli/models"
+	"github.com/topfreegames/mystack/mystack-cli/api"
+	"github.com/topfreegames/mystack/mystack-cli/models"
 	"testing"
 )
 

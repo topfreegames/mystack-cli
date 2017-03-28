@@ -1,5 +1,5 @@
-// kubecos api
-// https://github.com/topfreegames/kubecos
+// mystack api
+// https://github.com/topfreegames/mystack
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -8,8 +8,8 @@
 package api
 
 import (
-	"github.com/topfreegames/kubecos/kubecos-cli/errors"
-	"github.com/topfreegames/kubecos/kubecos-cli/models"
+	"github.com/topfreegames/mystack/mystack-cli/errors"
+	"github.com/topfreegames/mystack/mystack-cli/models"
 	"net/http"
 )
 

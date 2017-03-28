@@ -1,5 +1,5 @@
-// kubecos api
-// https://github.com/topfreegames/kubecos
+// mystack api
+// https://github.com/topfreegames/mystack
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -15,9 +15,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/topfreegames/kubecos/kubecos-cli/errors"
-	"github.com/topfreegames/kubecos/kubecos-cli/metadata"
-	"github.com/topfreegames/kubecos/kubecos-cli/models"
+	"github.com/topfreegames/mystack/mystack-cli/errors"
+	"github.com/topfreegames/mystack/mystack-cli/metadata"
+	"github.com/topfreegames/mystack/mystack-cli/models"
 	runner "gopkg.in/mgutz/dat.v2/sqlx-runner"
 )
 
@@ -73,7 +73,7 @@ func (a *App) configureApp() error {
 
 func (a *App) configureLogger() {
 	a.Logger = a.Logger.WithFields(logrus.Fields{
-		"source":    "kubecos-cli",
+		"source":    "mystack-cli",
 		"operation": "initializeApp",
 		"version":   metadata.Version,
 	})

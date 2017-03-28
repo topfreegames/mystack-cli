@@ -1,5 +1,5 @@
-// kubecos api
-// https://github.com/topfreegames/kubecos
+// mystack api
+// https://github.com/topfreegames/mystack
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -9,7 +9,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/topfreegames/kubecos/kubecos-cli/errors"
+	"github.com/topfreegames/mystack/mystack-cli/errors"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net"
@@ -44,7 +44,7 @@ func NewServerControl(listener net.Listener) *ServerControl {
 }
 
 var (
-	tokenDirectory = filepath.Join(os.Getenv("HOME"), ".kubecos")
+	tokenDirectory = filepath.Join(os.Getenv("HOME"), ".mystack")
 	tokenFile      = "token"
 )
 

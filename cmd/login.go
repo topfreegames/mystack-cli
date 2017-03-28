@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/topfreegames/kubecos/kubecos-cli/api"
-	"github.com/topfreegames/kubecos/kubecos-cli/models"
+	"github.com/topfreegames/mystack/mystack-cli/api"
+	"github.com/topfreegames/mystack/mystack-cli/models"
 )
 
 const host string = "0.0.0.0"
@@ -15,8 +15,8 @@ var quiet bool
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "login on kubecos",
-	Long:  "First login on kubecos to get access on your personal stack of services running on Kubernetes",
+	Short: "login on mystack",
+	Long:  "First login on mystack to get access on your personal stack of services running on Kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
 		ll := logrus.InfoLevel
 		switch Verbose {

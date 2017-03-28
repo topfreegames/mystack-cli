@@ -10,7 +10,7 @@ setup-hooks:
 	@cd .git/hooks && ln -sf ../../hooks/pre-commit.sh pre-commit
 
 build:
-	@go build -o ./bin/kubecos-cli main.go
+	@go build -o ./bin/mystack-cli main.go
 
 unit: clear-coverage-profiles unit-run gather-unit-profiles
 

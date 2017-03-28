@@ -1,7 +1,7 @@
 package models_test
 
 import (
-	"github.com/topfreegames/kubecos/kubecos-cli/models"
+	"github.com/topfreegames/mystack/mystack-cli/models"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
