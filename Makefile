@@ -1,5 +1,4 @@
 MY_IP=`ifconfig | grep --color=none -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep --color=none -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
-MYSTACK_LOGIN_TEST='test'
 
 setup: setup-hooks
 	@go get -u github.com/golang/dep...
@@ -13,13 +12,7 @@ setup-hooks:
 build:
 	@go build -o ./bin/kubecos-cli main.go
 
-export-test-var:
-	@export MYSTACK_LOGIN_TEST
-
-unexport-test-var:
-	@unset MYSTACK_LOGIN_TEST
-
-unit: export-test-var clear-coverage-profiles unit-run gather-unit-profiles
+unit: clear-coverage-profiles unit-run gather-unit-profiles
 
 clear-coverage-profiles:
 	@find . -name '*.coverprofile' -delete
@@ -32,7 +25,7 @@ gather-unit-profiles:
 	@echo "mode: count" > _build/coverage-unit.out
 	@bash -c 'for f in $$(find . -name "*.coverprofile"); do tail -n +2 $$f >> _build/coverage-unit.out; done'
 
-integration int: export-test-var clear-coverage-profiles integration-run gather-integration-profiles
+integration int: clear-coverage-profiles integration-run gather-integration-profiles
 
 integration-run:
 	@ginkgo -tags integration -cover -r -randomizeAllSpecs -randomizeSuites -skipMeasurements ${TEST_PACKAGES}
