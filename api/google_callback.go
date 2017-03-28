@@ -1,6 +1,14 @@
+// kubecos api
+// https://github.com/topfreegames/kubecos
+//
+// Licensed under the MIT license:
+// http://www.opensource.org/licenses/mit-license
+// Copyright © 2017 Top Free Games <backend@tfgco.com>
+
 package api
 
 import (
+	"github.com/topfreegames/kubecos/kubecos-cli/errors"
 	"github.com/topfreegames/kubecos/kubecos-cli/models"
 	"net/http"
 )
@@ -14,9 +22,16 @@ type OAuthCallbackHandler struct {
 func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	state := r.FormValue("state")
 	code := r.FormValue("code")
+	l := loggerFromContext(r.Context())
 
-	_ = models.SaveAccessToken(state, code, o.App.OAuthState)
-	//TODO: return error code
+	err := models.SaveAccessToken(state, code, o.App.OAuthState)
+	if err != nil {
+		if err, ok := err.(*errors.OAuthError); ok {
+			l.Error(err.Serialize())
+		}
 
-	o.App.Listener.Close()
+		l.Error(err)
+	}
+
+	o.App.ServerControl.CloseServer <- true
 }

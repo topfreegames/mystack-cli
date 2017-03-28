@@ -1,3 +1,10 @@
+// kubecos api
+// https://github.com/topfreegames/kubecos
+//
+// Licensed under the MIT license:
+// http://www.opensource.org/licenses/mit-license
+// Copyright © 2017 Top Free Games <backend@tfgco.com>
+
 package models
 
 import (
@@ -42,8 +49,7 @@ func open(url string) error {
 func Login(args ...interface{}) error {
 	oauthState := args[0].(string)
 	url := googleOauthConfig.AuthCodeURL(oauthState)
-	open(url)
+	err := open(url)
 
-	//TODO: check code 200
-	return nil
+	return err
 }

@@ -16,21 +16,22 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/satori/go.uuid"
-	"github.com/topfreegames/kubecos/kubecos-controller/errors"
-	"github.com/topfreegames/kubecos/kubecos-controller/metadata"
+	"github.com/topfreegames/kubecos/kubecos-cli/errors"
+	"github.com/topfreegames/kubecos/kubecos-cli/metadata"
+	"github.com/topfreegames/kubecos/kubecos-cli/models"
 	runner "gopkg.in/mgutz/dat.v2/sqlx-runner"
 )
 
 //App is our API application
 type App struct {
-	Address    string
-	DB         runner.Connection
-	Debug      bool
-	Logger     logrus.FieldLogger
-	Router     *mux.Router
-	Server     *http.Server
-	OAuthState string
-	Listener   net.Listener
+	Address       string
+	DB            runner.Connection
+	Debug         bool
+	Logger        logrus.FieldLogger
+	Router        *mux.Router
+	Server        *http.Server
+	OAuthState    string
+	ServerControl *models.ServerControl
 }
 
 //NewApp ctor
@@ -105,7 +106,7 @@ func (a *App) ListenAndServe(fn func(...interface{}) error, args ...interface{})
 		return nil, err
 	}
 
-	a.Listener = listener
+	a.ServerControl = models.NewServerControl(listener)
 
 	err = fn(args...)
 	if err != nil {
