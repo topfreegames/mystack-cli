@@ -8,6 +8,7 @@
 package models
 
 import (
+	"github.com/satori/go.uuid"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"os"
@@ -24,8 +25,6 @@ var (
 			"https://www.googleapis.com/auth/userinfo.email"},
 		Endpoint: google.Endpoint,
 	}
-	//OAuthStateString is used to check return from Authorization Server
-	OAuthStateString string
 )
 
 func open(url string) error {
@@ -46,9 +45,20 @@ func open(url string) error {
 }
 
 //Login gets an authorization code from google
-func Login(args ...interface{}) error {
-	oauthState := args[0].(string)
-	url := googleOauthConfig.AuthCodeURL(oauthState)
+type Login struct {
+	OAuthState string
+}
+
+//NewLogin is the Login ctor
+func NewLogin() *Login {
+	return &Login{
+		OAuthState: uuid.NewV4().String(),
+	}
+}
+
+//Perform makes a request to googleapis
+func (l *Login) Perform() error {
+	url := googleOauthConfig.AuthCodeURL(l.OAuthState)
 	err := open(url)
 
 	return err

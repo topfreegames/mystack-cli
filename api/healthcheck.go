@@ -9,8 +9,6 @@ package api
 
 import (
 	"net/http"
-
-	"github.com/topfreegames/kubecos/kubecos-controller/errors"
 )
 
 //HealthcheckHandler handler
@@ -23,15 +21,6 @@ func (h *HealthcheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	l := loggerFromContext(r.Context())
 
 	l.Debug("Performing healthcheck...")
-
-	_, err := h.App.DB.Exec("select 1")
-
-	if err != nil {
-		l.WithError(err).Error("Database is offline")
-		vErr := errors.NewDatabaseError(err)
-		WriteBytes(w, http.StatusInternalServerError, vErr.Serialize())
-		return
-	}
 
 	Write(w, http.StatusOK, `{"healthy": true}`)
 	l.Debug("Healthcheck done.")

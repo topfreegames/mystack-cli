@@ -15,7 +15,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"github.com/topfreegames/kubecos/kubecos-cli/errors"
 	"github.com/topfreegames/kubecos/kubecos-cli/metadata"
 	"github.com/topfreegames/kubecos/kubecos-cli/models"
@@ -30,17 +29,17 @@ type App struct {
 	Logger        logrus.FieldLogger
 	Router        *mux.Router
 	Server        *http.Server
-	OAuthState    string
 	ServerControl *models.ServerControl
+	Login         *models.Login
 }
 
 //NewApp ctor
-func NewApp(host string, port int, debug bool, logger logrus.FieldLogger) (*App, error) {
+func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, login *models.Login) (*App, error) {
 	a := &App{
-		Address:    fmt.Sprintf("%s:%d", host, port),
-		Debug:      debug,
-		Logger:     logger,
-		OAuthState: uuid.NewV4().String(),
+		Address: fmt.Sprintf("%s:%d", host, port),
+		Debug:   debug,
+		Logger:  logger,
+		Login:   login,
 	}
 	err := a.configureApp()
 	if err != nil {
@@ -100,7 +99,7 @@ func (a *App) HandleError(w http.ResponseWriter, status int, msg string, err int
 }
 
 //ListenAndServe requests
-func (a *App) ListenAndServe(fn func(...interface{}) error, args ...interface{}) (io.Closer, error) {
+func (a *App) ListenAndServe(fn func() error) (io.Closer, error) {
 	listener, err := net.Listen("tcp", a.Address)
 	if err != nil {
 		return nil, err
@@ -108,7 +107,7 @@ func (a *App) ListenAndServe(fn func(...interface{}) error, args ...interface{})
 
 	a.ServerControl = models.NewServerControl(listener)
 
-	err = fn(args...)
+	err = fn()
 	if err != nil {
 		return nil, err
 	}

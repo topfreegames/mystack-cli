@@ -39,11 +39,13 @@ var loginCmd = &cobra.Command{
 		})
 
 		cmdL.Debug("Creating callback server...")
+		login := models.NewLogin()
 		app, err := api.NewApp(
 			host,
 			port,
 			debug,
 			log,
+			login,
 		)
 		if err != nil {
 			cmdL.WithError(err).Fatal("Failed to start server.")
@@ -51,7 +53,7 @@ var loginCmd = &cobra.Command{
 		cmdL.Debug("Application created successfully.")
 
 		cmdL.Debug("Starting application...")
-		closer, err := app.ListenAndServe(models.Login, app.OAuthState)
+		closer, err := app.ListenAndServe(app.Login.Perform)
 		if closer != nil {
 			defer closer.Close()
 		}

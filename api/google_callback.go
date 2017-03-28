@@ -24,7 +24,7 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	code := r.FormValue("code")
 	l := loggerFromContext(r.Context())
 
-	err := models.SaveAccessToken(state, code, o.App.OAuthState)
+	err := models.SaveAccessToken(state, code, o.App.Login.OAuthState)
 	if err != nil {
 		if err, ok := err.(*errors.OAuthError); ok {
 			l.Error(err.Serialize())
