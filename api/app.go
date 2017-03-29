@@ -1,5 +1,5 @@
-// mystack api
-// https://github.com/topfreegames/mystack
+// mystack-cli api
+// https://github.com/topfreegames/mystack/mystack-cli
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -55,12 +55,6 @@ func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, config
 
 func (a *App) getRouter() *mux.Router {
 	r := mux.NewRouter()
-	r.Handle("/healthcheck", Chain(
-		&HealthcheckHandler{App: a},
-		&LoggingMiddleware{App: a},
-		&VersionMiddleware{},
-	)).Methods("GET").Name("healthcheck")
-
 	r.Handle("/google-callback", Chain(
 		&OAuthCallbackHandler{App: a},
 		&LoggingMiddleware{App: a},
