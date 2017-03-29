@@ -1,4 +1,4 @@
 mystack-cli
 ===========
 
-The CLI for kubecos
+The CLI for mystack
