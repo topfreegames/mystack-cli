@@ -1,2 +1,4 @@
-# MyStacks
-Personal cluster of services on kubernetes
+mystack-cli
+===========
+
+The CLI for mystack
