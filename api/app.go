@@ -15,7 +15,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/spf13/viper"
 	"github.com/topfreegames/mystack/mystack-cli/errors"
 	"github.com/topfreegames/mystack/mystack-cli/metadata"
 	"github.com/topfreegames/mystack/mystack-cli/models"
@@ -35,16 +34,12 @@ type App struct {
 }
 
 //NewApp ctor
-func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, config *viper.Viper) (*App, error) {
-	controllerProtocol := config.GetString("controller.protocol")
-	controllerHost := config.GetString("controller.host")
-	controllerPort := config.GetString("controller.port")
-
+func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, controllerURL string) (*App, error) {
 	a := &App{
 		Address: fmt.Sprintf("%s:%d", host, port),
 		Debug:   debug,
 		Logger:  logger,
-		Login:   models.NewLogin(controllerProtocol, controllerHost, controllerPort),
+		Login:   models.NewLogin(controllerURL),
 	}
 	err := a.configureApp()
 	if err != nil {

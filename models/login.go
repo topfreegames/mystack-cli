@@ -41,10 +41,10 @@ type Login struct {
 }
 
 //NewLogin is the Login ctor
-func NewLogin(protocol, host, port string) *Login {
+func NewLogin(controllerURL string) *Login {
 	return &Login{
 		OAuthState: randToken(),
-		ServerURL:  fmt.Sprintf("%s://%s:%s", protocol, host, port),
+		ServerURL:  controllerURL,
 	}
 }
 

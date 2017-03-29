@@ -1,6 +1,5 @@
 // mystack-cli api
-// https://github.com/topfreegames/mystack/mystack-cli
-//
+// https://github.com/topfreegames/mystack/mystack-cli //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
 // Copyright © 2017 Top Free Games <backend@tfgco.com>
@@ -13,7 +12,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/topfreegames/mystack/mystack-cli/api"
-	mTesting "github.com/topfreegames/mystack/mystack-cli/testing"
 	"testing"
 )
 
@@ -28,10 +26,7 @@ var _ = BeforeSuite(func() {
 	l := logrus.New()
 	l.Level = logrus.FatalLevel
 
-	config, err := mTesting.GetDefaultConfig()
-	Expect(err).NotTo(HaveOccurred())
-
-	app, err = api.NewApp("0.0.0.0", 8989, false, l, config)
+	_, err := api.NewApp("0.0.0.0", 57459, false, l, "http://localhost:8888")
 	Expect(err).NotTo(HaveOccurred())
 })
 

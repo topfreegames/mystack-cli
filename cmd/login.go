@@ -7,17 +7,17 @@ import (
 )
 
 const host string = "0.0.0.0"
-const port int = 8989
+const port int = 57459
 
 var debug bool
 var quiet bool
+var controllerURL string
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "login on mystack",
 	Long:  "First login on mystack to get access on your personal stack of services running on Kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
-		InitConfig()
 		ll := logrus.InfoLevel
 		switch Verbose {
 		case 0:
@@ -44,7 +44,7 @@ var loginCmd = &cobra.Command{
 			port,
 			debug,
 			log,
-			config,
+			controllerURL,
 		)
 		if err != nil {
 			cmdL.WithError(err).Fatal("Failed to start server.")
@@ -65,6 +65,7 @@ var loginCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(loginCmd)
 
+	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:8888", "Controllers URL")
 	loginCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Debug mode")
 	loginCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Quiet mode (log level error)")
 }
