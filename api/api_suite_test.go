@@ -6,7 +6,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/topfreegames/mystack/mystack-cli/api"
-	"github.com/topfreegames/mystack/mystack-cli/models"
+	mTesting "github.com/topfreegames/mystack/mystack-cli/testing"
 	"testing"
 )
 
@@ -21,8 +21,10 @@ var _ = BeforeSuite(func() {
 	l := logrus.New()
 	l.Level = logrus.FatalLevel
 
-	var err error
-	app, err = api.NewApp("0.0.0.0", 8989, false, l, models.NewLogin())
+	config, err := mTesting.GetDefaultConfig()
+	Expect(err).NotTo(HaveOccurred())
+
+	app, err = api.NewApp("0.0.0.0", 8989, false, l, config)
 	Expect(err).NotTo(HaveOccurred())
 })
 

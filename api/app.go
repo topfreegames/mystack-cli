@@ -15,6 +15,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 	"github.com/topfreegames/mystack/mystack-cli/errors"
 	"github.com/topfreegames/mystack/mystack-cli/metadata"
 	"github.com/topfreegames/mystack/mystack-cli/models"
@@ -34,12 +35,16 @@ type App struct {
 }
 
 //NewApp ctor
-func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, login *models.Login) (*App, error) {
+func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, config *viper.Viper) (*App, error) {
+	controllerProtocol := config.GetString("controller.protocol")
+	controllerHost := config.GetString("controller.host")
+	controllerPort := config.GetString("controller.port")
+
 	a := &App{
 		Address: fmt.Sprintf("%s:%d", host, port),
 		Debug:   debug,
 		Logger:  logger,
-		Login:   login,
+		Login:   models.NewLogin(controllerProtocol, controllerHost, controllerPort),
 	}
 	err := a.configureApp()
 	if err != nil {
@@ -98,8 +103,8 @@ func (a *App) HandleError(w http.ResponseWriter, status int, msg string, err int
 	w.Write(sErr.Serialize())
 }
 
-//ListenAndServe requests
-func (a *App) ListenAndServe(fn func() error) (io.Closer, error) {
+//ListenAndLoginAndServe logins and starts local server to get access token from google
+func (a *App) ListenAndLoginAndServe() (io.Closer, error) {
 	listener, err := net.Listen("tcp", a.Address)
 	if err != nil {
 		return nil, err
@@ -107,7 +112,7 @@ func (a *App) ListenAndServe(fn func() error) (io.Closer, error) {
 
 	a.ServerControl = models.NewServerControl(listener)
 
-	err = fn()
+	err = a.Login.Perform()
 	if err != nil {
 		return nil, err
 	}

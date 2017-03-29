@@ -8,11 +8,12 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/topfreegames/mystack/mystack-cli/errors"
-	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -67,22 +68,20 @@ func writeFile(str string) error {
 }
 
 //SaveAccessToken get access token from authorization code and saves locally
-func SaveAccessToken(state, code, expectedState string) error {
+func SaveAccessToken(basePath, state, code, expectedState string) error {
 	if state != expectedState {
 		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("invalid oauth state, expected '%s', got '%s'", expectedState, state))
 		return err
 	}
 
-	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("Code exchange failed with '%s'", err))
-		return err
-	}
-	if !token.Valid() {
-		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("Invalid token received from Authorization Server"))
-		return err
-	}
+	url := fmt.Sprintf("%s/access?code=%s", basePath, code)
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
+	var bodyObj map[string]interface{}
+	body, err := ioutil.ReadAll(resp.Body)
+	json.Unmarshal(body, &bodyObj)
+	token := bodyObj["token"].(string)
 
-	err = writeFile(token.AccessToken)
+	err = writeFile(token)
 	return err
 }
