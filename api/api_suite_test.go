@@ -1,5 +1,5 @@
 // mystack-cli api
-// https://github.com/topfreegames/mystack/mystack-cli //
+// https://github.com/topfreegames/mystack-cli //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
 // Copyright © 2017 Top Free Games <backend@tfgco.com>
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/topfreegames/mystack/mystack-cli/api"
+	"github.com/topfreegames/mystack-cli/api"
 	"testing"
 )
 

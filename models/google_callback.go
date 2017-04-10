@@ -1,5 +1,5 @@
 // mystack-cli api
-// https://github.com/topfreegames/mystack/mystack-cli
+// https://github.com/topfreegames/mystack-cli
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -10,7 +10,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/topfreegames/mystack/mystack-cli/errors"
+	"github.com/topfreegames/mystack-cli/errors"
 	"io/ioutil"
 	"net"
 	"net/http"

@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/topfreegames/mystack/mystack-cli/api"
+	"github.com/topfreegames/mystack-cli/api"
 )
 
 const host string = "0.0.0.0"

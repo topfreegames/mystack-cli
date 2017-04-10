@@ -1,14 +1,6 @@
 {
-    "memo": "a802553ed80c85e911c32ebfeb6b8de0a6fb2a9188b7b8f8e67bb23d84cf4b44",
+    "memo": "744f53f818bcfd50f44cd62899d00f8e7da3a907387e987b8c912f8c57222ccc",
     "projects": [
-        {
-            "name": "github.com/GuiaBolso/darwin",
-            "branch": "master",
-            "revision": "86919dfcf80873d58ea2e527c15b1e02a5636ead",
-            "packages": [
-                "."
-            ]
-        },
         {
             "name": "github.com/Sirupsen/logrus",
             "version": "v0.11.5",
@@ -21,14 +13,6 @@
             "name": "github.com/cenkalti/backoff",
             "version": "v1.0.0",
             "revision": "32cd0c5b3aef12c76ed64aaf678f6c79736be7dc",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/fsnotify/fsnotify",
-            "version": "v1.4.2",
-            "revision": "629574ca2a5df945712d3079857300b5e4da0236",
             "packages": [
                 "."
             ]
@@ -59,22 +43,6 @@
             ]
         },
         {
-            "name": "github.com/hashicorp/hcl",
-            "branch": "master",
-            "revision": "630949a3c5fa3c613328e1b8256052cbc2327c9b",
-            "packages": [
-                ".",
-                "hcl/ast",
-                "hcl/parser",
-                "hcl/scanner",
-                "hcl/strconv",
-                "hcl/token",
-                "json/parser",
-                "json/scanner",
-                "json/token"
-            ]
-        },
-        {
             "name": "github.com/inconshreveable/mousetrap",
             "branch": "master",
             "revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
@@ -101,14 +69,6 @@
             ]
         },
         {
-            "name": "github.com/magiconair/properties",
-            "version": "v1.7.2",
-            "revision": "f917359f079a3759162704eaa8caeec3d01d9f91",
-            "packages": [
-                "."
-            ]
-        },
-        {
             "name": "github.com/mattn/go-colorable",
             "version": "v0.0.7",
             "revision": "d228849504861217f796da67fae4f6e347643f15",
@@ -118,8 +78,8 @@
         },
         {
             "name": "github.com/mattn/go-isatty",
-            "version": "v0.0.1",
-            "revision": "3a115632dcd687f9c8cd01679c83a06a0e21c1f3",
+            "version": "v0.0.2",
+            "revision": "fc9e8d8ef48496124e79ae0df75490096eccf6fe",
             "packages": [
                 "."
             ]
@@ -134,7 +94,7 @@
         },
         {
             "name": "github.com/mgutz/logxi",
-            "branch": "master",
+            "version": "v1",
             "revision": "aebf8a7d67ab4625e0fd4a665766fef9a709161b",
             "packages": [
                 "v1"
@@ -149,27 +109,47 @@
             ]
         },
         {
-            "name": "github.com/mitchellh/mapstructure",
-            "branch": "master",
-            "revision": "53818660ed4955e899c0bcafa97299a388bd7c8e",
+            "name": "github.com/onsi/ginkgo",
+            "version": "v1.3.1",
+            "revision": "77a8c1e5c40d6bb6c5eb4dd4bdce9763564f6298",
             "packages": [
-                "."
+                ".",
+                "config",
+                "internal/codelocation",
+                "internal/containernode",
+                "internal/failer",
+                "internal/leafnodes",
+                "internal/remote",
+                "internal/spec",
+                "internal/spec_iterator",
+                "internal/specrunner",
+                "internal/suite",
+                "internal/testingtproxy",
+                "internal/writer",
+                "reporters",
+                "reporters/stenographer",
+                "reporters/stenographer/support/go-colorable",
+                "reporters/stenographer/support/go-isatty",
+                "types"
             ]
         },
         {
-            "name": "github.com/pelletier/go-buffruneio",
-            "version": "v0.2.0",
-            "revision": "c37440a7cf42ac63b919c752ca73a85067e05992",
+            "name": "github.com/onsi/gomega",
+            "version": "v1.1.0",
+            "revision": "334b8f472b3af5d541c5642701c1e29e2126f486",
             "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/pelletier/go-toml",
-            "version": "v0.5.0",
-            "revision": "13d49d4606eb801b8f01ae542b4afc4c6ee3d84a",
-            "packages": [
-                "."
+                ".",
+                "format",
+                "internal/assertion",
+                "internal/asyncassertion",
+                "internal/oraclematcher",
+                "internal/testingtsupport",
+                "matchers",
+                "matchers/support/goraph/bipartitegraph",
+                "matchers/support/goraph/edge",
+                "matchers/support/goraph/node",
+                "matchers/support/goraph/util",
+                "types"
             ]
         },
         {
@@ -189,34 +169,9 @@
             ]
         },
         {
-            "name": "github.com/spf13/afero",
-            "branch": "master",
-            "revision": "9be650865eab0c12963d8753212f4f9c66cdcf12",
-            "packages": [
-                ".",
-                "mem"
-            ]
-        },
-        {
-            "name": "github.com/spf13/cast",
-            "version": "v1.0.0",
-            "revision": "ce135a4ebeee6cfe9a26c93ee0d37825f26113c7",
-            "packages": [
-                "."
-            ]
-        },
-        {
             "name": "github.com/spf13/cobra",
             "branch": "master",
-            "revision": "7be4beda01ec05d0b93d80b3facd2b6f44080d94",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/spf13/jwalterweatherman",
-            "branch": "master",
-            "revision": "fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66",
+            "revision": "5deb57bbca49eb370538fc295ba4b2988f9f5e09",
             "packages": [
                 "."
             ]
@@ -224,51 +179,17 @@
         {
             "name": "github.com/spf13/pflag",
             "branch": "master",
-            "revision": "d16db1e50e33dff1b6cdf37596cef36742128670",
+            "revision": "9a906f17374922ed0f74e1b2f593d3723f2ffb00",
             "packages": [
                 "."
-            ]
-        },
-        {
-            "name": "github.com/spf13/viper",
-            "branch": "master",
-            "revision": "84f94806c67f59dd7ae87bc5351f7a9c94a4558d",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/topfreegames/kubecos",
-            "branch": "master",
-            "revision": "0e6cd832cfacc8f8f23b1f086e3c359353b720b3",
-            "packages": [
-                "api",
-                "cmd",
-                "errors",
-                "metadata",
-                "migrations",
-                "models"
             ]
         },
         {
             "name": "golang.org/x/sys",
             "branch": "master",
-            "revision": "afadfcc7779c1f4db0f6f6438afcb108d9c9c7cd",
+            "revision": "f3918c30c5c2cb527c0b071a27c35120a6c0719a",
             "packages": [
                 "unix"
-            ]
-        },
-        {
-            "name": "golang.org/x/text",
-            "branch": "master",
-            "revision": "fc7fa097411d30e6708badff276c4c164425590c",
-            "packages": [
-                "internal/gen",
-                "internal/triegen",
-                "internal/ucd",
-                "transform",
-                "unicode/cldr",
-                "unicode/norm"
             ]
         },
         {
@@ -287,7 +208,7 @@
         {
             "name": "gopkg.in/yaml.v2",
             "branch": "v2",
-            "revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+            "revision": "cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b",
             "packages": [
                 "."
             ]

@@ -1,5 +1,5 @@
 // mystack-cli api
-// https://github.com/topfreegames/mystack/mystack-cli
+// https://github.com/topfreegames/mystack-cli
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -15,9 +15,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/topfreegames/mystack/mystack-cli/errors"
-	"github.com/topfreegames/mystack/mystack-cli/metadata"
-	"github.com/topfreegames/mystack/mystack-cli/models"
+	"github.com/topfreegames/mystack-cli/errors"
+	"github.com/topfreegames/mystack-cli/metadata"
+	"github.com/topfreegames/mystack-cli/models"
 	runner "gopkg.in/mgutz/dat.v2/sqlx-runner"
 )
 

@@ -1,5 +1,5 @@
 // mystack-cli api
-// https://github.com/topfreegames/mystack/mystack-cli
+// https://github.com/topfreegames/mystack-cli
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -7,7 +7,7 @@
 
 package main
 
-import "github.com/topfreegames/mystack/mystack-cli/cmd"
+import "github.com/topfreegames/mystack-cli/cmd"
 
 func main() {
 	cmd.Execute(cmd.RootCmd)
