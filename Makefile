@@ -20,6 +20,9 @@ clear-coverage-profiles:
 unit-run:
 	@ginkgo -cover -r -randomizeAllSpecs -randomizeSuites -skipMeasurements ${TEST_PACKAGES}
 
+run:
+	@go run main.go
+
 gather-unit-profiles:
 	@mkdir -p _build
 	@echo "mode: count" > _build/coverage-unit.out
