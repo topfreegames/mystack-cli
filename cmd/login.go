@@ -25,17 +25,21 @@ var loginCmd = &cobra.Command{
 	Long:  "First login on mystack to get access on your personal stack of services running on Kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
 		ll := logrus.InfoLevel
-		switch Verbose {
+		switch verbose {
 		case 0:
 			ll = logrus.ErrorLevel
+			break
 		case 1:
 			ll = logrus.WarnLevel
+			break
 		case 3:
 			ll = logrus.DebugLevel
+			break
+		default:
+			ll = logrus.InfoLevel
 		}
 
-		var log = logrus.New()
-		log.Formatter = new(logrus.JSONFormatter)
+		log = logrus.New()
 		log.Level = ll
 
 		cmdL := log.WithFields(logrus.Fields{
@@ -50,6 +54,7 @@ var loginCmd = &cobra.Command{
 			port,
 			debug,
 			log,
+			environment,
 			controllerURL,
 		)
 		if err != nil {
@@ -70,8 +75,7 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(loginCmd)
-
-	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:8888", "Controllers URL")
+	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:8080", "Controllers URL")
 	loginCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Debug mode")
 	loginCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Quiet mode (log level error)")
 }

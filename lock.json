@@ -1,5 +1,5 @@
 {
-    "memo": "744f53f818bcfd50f44cd62899d00f8e7da3a907387e987b8c912f8c57222ccc",
+    "memo": "ea26476bcd602e867b8b3b0123eb74f0ce0ebb127b94810df66fbfa99e98e689",
     "projects": [
         {
             "name": "github.com/Sirupsen/logrus",
@@ -53,7 +53,7 @@
         {
             "name": "github.com/jmoiron/sqlx",
             "branch": "master",
-            "revision": "8ed836a8adb659e8492bcaa49e0880bb84075fe2",
+            "revision": "3564e3a314b957a161fefa0e7aea85b4d741c94e",
             "packages": [
                 ".",
                 "reflectx"
@@ -104,6 +104,14 @@
             "name": "github.com/mgutz/str",
             "version": "v1.2.0",
             "revision": "968bf66e3da857419e4f6e71b2d5c9ae95682dc4",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/miekg/dns",
+            "branch": "master",
+            "revision": "6ebcb714d36901126ee2807031543b38c56de963",
             "packages": [
                 "."
             ]
@@ -179,7 +187,7 @@
         {
             "name": "github.com/spf13/pflag",
             "branch": "master",
-            "revision": "9a906f17374922ed0f74e1b2f593d3723f2ffb00",
+            "revision": "e453343e6260b4a3a89f1f0e10a2fbb07f8d9750",
             "packages": [
                 "."
             ]

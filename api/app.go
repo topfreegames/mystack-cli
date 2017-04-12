@@ -31,15 +31,19 @@ type App struct {
 	Server        *http.Server
 	ServerControl *models.ServerControl
 	Login         *models.Login
+	env           string
+	controllerURL string
 }
 
 //NewApp ctor
-func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, controllerURL string) (*App, error) {
+func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, env, controllerURL string) (*App, error) {
 	a := &App{
-		Address: fmt.Sprintf("%s:%d", host, port),
-		Debug:   debug,
-		Logger:  logger,
-		Login:   models.NewLogin(controllerURL),
+		Address:       fmt.Sprintf("%s:%d", host, port),
+		Debug:         debug,
+		Logger:        logger,
+		Login:         models.NewLogin(controllerURL),
+		env:           env,
+		controllerURL: controllerURL,
 	}
 	err := a.configureApp()
 	if err != nil {

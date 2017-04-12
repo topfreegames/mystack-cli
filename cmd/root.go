@@ -11,15 +11,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/topfreegames/mystack-cli/models"
 )
 
 // Verbose determines how verbose mystack wll run under
-var Verbose int
+var verbose int
+var environment string
+var log *logrus.Logger
+var config *models.Config
 
 // RootCmd is the root command for mystack CLI application
 var RootCmd = &cobra.Command{
-	Use:   "mystack",
+	Use:   "mysctl",
 	Short: "mystack handles manages your personal cluster",
 	Long:  `Use mystack to start your services on kubernetes.`,
 }
@@ -33,8 +38,8 @@ func Execute(cmd *cobra.Command) {
 }
 
 func init() {
-	RootCmd.PersistentFlags().IntVarP(
-		&Verbose, "verbose", "v", 0,
+	RootCmd.PersistentFlags().IntVarP(&verbose, "verbose", "v", 0,
 		"Verbosity level => v0: Error, v1=Warning, v2=Info, v3=Debug",
 	)
+	RootCmd.PersistentFlags().StringVarP(&environment, "environment", "e", "production", "Environment")
 }

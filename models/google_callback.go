@@ -14,8 +14,6 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
-	"path/filepath"
 )
 
 //ServerControl starts a go routine to end the server after callback
@@ -44,31 +42,8 @@ func NewServerControl(listener net.Listener) *ServerControl {
 	return serverControl
 }
 
-var (
-	tokenDirectory = filepath.Join(os.Getenv("HOME"), ".mystack")
-	tokenFile      = "token"
-)
-
-func writeFile(str string) error {
-	err := os.MkdirAll(tokenDirectory, os.ModePerm)
-	if err != nil {
-		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("Couldn't save token due to: '%s'", err))
-		return err
-	}
-
-	tokenPath := fmt.Sprintf("%s/%s", tokenDirectory, tokenFile)
-	bts := []byte(str)
-	err = ioutil.WriteFile(tokenPath, bts, 0644)
-	if err != nil {
-		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("Couldn't save token due to: '%s'", err))
-		return err
-	}
-
-	return nil
-}
-
 //SaveAccessToken get access token from authorization code and saves locally
-func SaveAccessToken(basePath, state, code, expectedState string) error {
+func SaveAccessToken(basePath, state, code, expectedState, env, controllerURL string) error {
 	if state != expectedState {
 		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("invalid oauth state, expected '%s', got '%s'", expectedState, state))
 		return err
@@ -76,12 +51,16 @@ func SaveAccessToken(basePath, state, code, expectedState string) error {
 
 	url := fmt.Sprintf("%s/access?code=%s", basePath, code)
 	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
 	defer resp.Body.Close()
 	var bodyObj map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(body, &bodyObj)
 	token := bodyObj["token"].(string)
 
-	err = writeFile(token)
+	c := NewConfig(env, token, controllerURL)
+	err = c.Write()
 	return err
 }

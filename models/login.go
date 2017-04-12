@@ -55,7 +55,7 @@ func randToken() string {
 //Perform makes a request to googleapis
 func (l *Login) Perform() error {
 	basePath := l.ServerURL
-	resp, err := http.Get(fmt.Sprintf("%s/logins?state=%s", basePath, l.OAuthState))
+	resp, err := http.Get(fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState))
 	if err != nil {
 		return err
 	}
