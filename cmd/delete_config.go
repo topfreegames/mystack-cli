@@ -14,7 +14,7 @@ import (
 
 // delete_configCmd represents the delete_config command
 var deleteConfigCmd = &cobra.Command{
-	Use:   "config",
+	Use:   "delete-config",
 	Short: "deletes a config",
 	Long:  `deletes a config in mystack`,
 	Run: func(cmd *cobra.Command, args []string) {
