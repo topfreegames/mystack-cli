@@ -25,6 +25,10 @@ func createBody() (map[string]interface{}, error) {
 		return nil, err
 	}
 
+	if len(bts) == 0 {
+		return nil, fmt.Errorf("file path was not informed")
+	}
+
 	bodyJSON := make(map[string]interface{})
 	bodyJSON["yaml"] = string(bts)
 
