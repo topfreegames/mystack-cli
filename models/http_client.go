@@ -8,6 +8,8 @@
 package models
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -28,15 +30,14 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 	return h
 }
 
-// GET does a get request
-func (c *MyStackHTTPClient) GET(url string) ([]byte, error) {
+// Get does a get request
+func (c *MyStackHTTPClient) Get(url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	auth := fmt.Sprintf("Bearer %s", c.config.Token)
-	req.Header.Add("Authorization", auth)
+	c.addAuthHeader(req)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -47,4 +48,63 @@ func (c *MyStackHTTPClient) GET(url string) ([]byte, error) {
 		return nil, err
 	}
 	return body, nil
+}
+
+// Put does a put request
+func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte, int, error) {
+	ioBody, err := ioReader(body)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	req, err := http.NewRequest("PUT", url, ioBody)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	c.addAuthHeader(req)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer res.Body.Close()
+	responseBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, 0, err
+	}
+	return responseBody, res.StatusCode, nil
+}
+
+// Delete does a put request
+func (c *MyStackHTTPClient) Delete(url string) ([]byte, error) {
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	c.addAuthHeader(req)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	responseBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return responseBody, nil
+}
+
+func (c *MyStackHTTPClient) addAuthHeader(req *http.Request) {
+	auth := fmt.Sprintf("Bearer %s", c.config.Token)
+	req.Header.Add("Authorization", auth)
+}
+
+func ioReader(body map[string]interface{}) (*bytes.Reader, error) {
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes.NewReader(bodyBytes), nil
 }

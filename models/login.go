@@ -55,13 +55,15 @@ func randToken() string {
 //Perform makes a request to googleapis
 func (l *Login) Perform() error {
 	basePath := l.ServerURL
-	resp, err := http.Get(fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState))
+	path := fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState)
+	fmt.Println("path", path)
+	resp, err := http.Get(path)
 	if err != nil {
 		return err
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Status code %d when GET request to controller server", resp.StatusCode)
+		return fmt.Errorf("status code %d when GET request to controller server", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
