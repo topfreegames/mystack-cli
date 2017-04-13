@@ -77,4 +77,5 @@ var createClusterCmd = &cobra.Command{
 
 func init() {
 	createCmd.AddCommand(createClusterCmd)
+	createClusterCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }
