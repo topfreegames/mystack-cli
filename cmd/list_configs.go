@@ -17,7 +17,7 @@ import (
 // listConfigsCmd represents the listConfigs.go command
 var listConfigsCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List cluster configs",
+	Short: "list cluster configs",
 	Long:  `Get the list of cluster configs already created on the Mystack-Controller`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ll := logrus.InfoLevel

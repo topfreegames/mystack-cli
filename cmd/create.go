@@ -17,6 +17,8 @@ var createCmd = &cobra.Command{
 	Long:  `creates a resource in mystack`,
 }
 
+var clusterName string
+
 func init() {
 	RootCmd.AddCommand(createCmd)
 }

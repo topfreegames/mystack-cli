@@ -17,7 +17,6 @@ import (
 )
 
 var filePath string
-var clusterName string
 
 func createBody() (map[string]interface{}, error) {
 	bts, err := ioutil.ReadFile(filePath)
