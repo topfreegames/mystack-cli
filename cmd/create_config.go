@@ -68,7 +68,7 @@ var createConfigCmd = &cobra.Command{
 		}
 
 		client := models.NewMyStackHTTPClient(config)
-		createClusterURL := fmt.Sprintf("%s/cluster-configs/%s/create", controllerURL, clusterName)
+		createClusterURL := fmt.Sprintf("%s/cluster-configs/%s/create", c.ControllerURL, clusterName)
 		bodyJSON, err := createBody()
 		if err != nil {
 			cmdL.WithError(err).Fatalf("error during reading file path '%s'", filePath)
@@ -76,7 +76,7 @@ var createConfigCmd = &cobra.Command{
 
 		body, status, err := client.Put(createClusterURL, bodyJSON)
 		if err != nil {
-			msg := fmt.Sprintf("Failed to execute request to '%s'", controllerURL)
+			msg := fmt.Sprintf("Failed to execute request to '%s'", c.ControllerURL)
 			cmdL.WithError(err).Fatal(msg)
 			os.Exit(1)
 		}
@@ -87,13 +87,12 @@ var createConfigCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Success")
+		fmt.Printf("Cluster config '%s' successfully created\n", clusterName)
 	},
 }
 
 func init() {
 	createCmd.AddCommand(createConfigCmd)
-	createConfigCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "", "Controllers URL")
 	createConfigCmd.Flags().StringVarP(&filePath, "filePath", "f", "", "Config file path")
 	createConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }

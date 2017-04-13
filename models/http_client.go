@@ -76,23 +76,23 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 }
 
 // Delete does a put request
-func (c *MyStackHTTPClient) Delete(url string) ([]byte, error) {
+func (c *MyStackHTTPClient) Delete(url string) ([]byte, int, error) {
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	c.addAuthHeader(req)
 	res, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer res.Body.Close()
 	responseBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return responseBody, nil
+	return responseBody, res.StatusCode, nil
 }
 
 func (c *MyStackHTTPClient) addAuthHeader(req *http.Request) {
