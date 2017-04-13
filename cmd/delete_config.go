@@ -17,7 +17,7 @@ import (
 
 // delete_configCmd represents the delete_config command
 var deleteConfigCmd = &cobra.Command{
-	Use:   "delete-config",
+	Use:   "config",
 	Short: "deletes a config",
 	Long:  `deletes a config in mystack`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -72,4 +72,5 @@ var deleteConfigCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteConfigCmd)
+	deleteConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }
