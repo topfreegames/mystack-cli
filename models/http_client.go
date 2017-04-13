@@ -31,23 +31,23 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 }
 
 // Get does a get request
-func (c *MyStackHTTPClient) Get(url string) ([]byte, error) {
+func (c *MyStackHTTPClient) Get(url string) ([]byte, int, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	c.addAuthHeader(req)
 	res, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return body, nil
+	return body, res.StatusCode, nil
 }
 
 // Put does a put request

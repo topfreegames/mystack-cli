@@ -7,7 +7,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -78,16 +77,13 @@ var createConfigCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		bodyJSON = make(map[string]interface{})
-		json.Unmarshal(body, &bodyJSON)
 		if status != 200 && status != 201 {
-			fmt.Printf(
-				"Status: %d\nError: %s\nDescription: %s",
-				status,
-				bodyJSON["error"],
-				bodyJSON["description"],
-			)
+			printer := models.NewErrorPrinter(body, status)
+			printer.Print()
+			return
 		}
+
+		fmt.Println("Success")
 	},
 }
 
