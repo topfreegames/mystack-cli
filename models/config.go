@@ -5,11 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"path/filepath"
-)
-
-var (
-	cfgDir = filepath.Join(os.Getenv("HOME"), ".mystack")
 )
 
 // Config struct
@@ -31,7 +28,10 @@ func NewConfig(env, token, controllerURL string) *Config {
 
 // ReadConfig from file
 func ReadConfig(env string) (*Config, error) {
-	cfgPath := getConfigPathForEnv(env)
+	cfgPath, err := getConfigPathForEnv(env)
+	if err != nil {
+		return nil, err
+	}
 	if _, err := os.Stat(cfgPath); os.IsNotExist(err) {
 		return nil, err
 	}
@@ -48,14 +48,36 @@ func ReadConfig(env string) (*Config, error) {
 	return c, nil
 }
 
-func getConfigPathForEnv(env string) string {
-	return fmt.Sprintf("%s/mystack-%s.json", cfgDir, env)
+func getConfigDir() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	cfgDir := filepath.Join(usr.HomeDir, ".mystack")
+	return cfgDir, nil
+}
+
+func getConfigPathForEnv(env string) (string, error) {
+	cfgDir, err := getConfigDir()
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/mystack-%s.json", cfgDir, env), nil
 }
 
 // Write the config file to disk
 func (c *Config) Write() error {
-	cfgPath := getConfigPathForEnv(c.Env)
+	cfgPath, err := getConfigPathForEnv(c.Env)
+	if err != nil {
+		return err
+	}
 	cfg, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+	cfgDir, err := getConfigDir()
 	if err != nil {
 		return err
 	}

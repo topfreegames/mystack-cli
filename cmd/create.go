@@ -17,6 +17,9 @@ var createCmd = &cobra.Command{
 	Long:  `creates a resource in mystack`,
 }
 
+var clusterName string
+
 func init() {
 	RootCmd.AddCommand(createCmd)
+	createCmd.PersistentFlags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }
