@@ -61,6 +61,7 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 	if err != nil {
 		return nil, 0, err
 	}
+	req.Close = true
 
 	c.addAuthHeader(req)
 	res, err := c.client.Do(req)

@@ -93,5 +93,4 @@ var createConfigCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createConfigCmd)
 	createConfigCmd.Flags().StringVarP(&filePath, "filePath", "f", "", "Config file path")
-	createConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }
