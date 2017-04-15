@@ -72,5 +72,4 @@ var deleteConfigCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteConfigCmd)
-	deleteConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 }
