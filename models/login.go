@@ -56,7 +56,6 @@ func randToken() string {
 func (l *Login) Perform() error {
 	basePath := l.ServerURL
 	path := fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState)
-	fmt.Println("path", path)
 	resp, err := http.Get(path)
 	if err != nil {
 		return err

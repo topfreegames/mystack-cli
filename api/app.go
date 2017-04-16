@@ -12,6 +12,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
@@ -111,7 +112,7 @@ func (a *App) ListenAndLoginAndServe() (io.Closer, error) {
 	}
 
 	err = a.Server.Serve(listener)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "use of closed network connection") {
 		listener.Close()
 		return nil, err
 	}
