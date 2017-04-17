@@ -16,8 +16,9 @@ import (
 
 //ErrorPrinter implements the Printer interface
 type ErrorPrinter struct {
-	Error  map[string]interface{}
-	Status int
+	ErrorMap map[string]interface{}
+	Status   int
+	Error    string
 }
 
 //NewErrorPrinter is the ErrorPrinter ctor
@@ -25,8 +26,9 @@ func NewErrorPrinter(body []byte, status int) *ErrorPrinter {
 	bodyJSON := make(map[string]interface{})
 	json.Unmarshal(body, &bodyJSON)
 	return &ErrorPrinter{
-		Error:  bodyJSON,
-		Status: status,
+		ErrorMap: bodyJSON,
+		Status:   status,
+		Error:    string(body),
 	}
 }
 
@@ -34,11 +36,16 @@ func NewErrorPrinter(body []byte, status int) *ErrorPrinter {
 func (e *ErrorPrinter) Print() {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
-	description := e.Error["description"].(string)
+	if _, ok := e.ErrorMap["description"]; ok {
+		description := e.ErrorMap["description"].(string)
 
-	fmt.Fprintln(w, "An error ocurred:")
-	fmt.Fprintf(w, "\tStatus:\t%d\n", e.Status)
-	fmt.Fprintf(w, "\tError:\t%s\n", e.Error["error"])
-	fmt.Fprintf(w, "\tDescription:\t%s\n", strings.Replace(description, "\n", " ", -1))
-	w.Flush()
+		fmt.Fprintln(w, "An error ocurred:")
+		fmt.Fprintf(w, "\tStatus:\t%d\n", e.Status)
+		fmt.Fprintf(w, "\tError:\t%s\n", e.ErrorMap["error"])
+		fmt.Fprintf(w, "\tDescription:\t%s\n", strings.Replace(description, "\n", " ", -1))
+		w.Flush()
+		return
+	}
+
+	fmt.Fprintln(w, e.Error)
 }

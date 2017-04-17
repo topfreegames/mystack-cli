@@ -26,7 +26,7 @@ var _ = BeforeSuite(func() {
 	l := logrus.New()
 	l.Level = logrus.FatalLevel
 
-	_, err := api.NewApp("0.0.0.0", 57459, false, l, "production", "http://localhost:8080", "mystack.controller.com")
+	_, err := api.NewApp("0.0.0.0", 57459, false, l, "production", "http://localhost:8080", "controller.mystack.com")
 	Expect(err).NotTo(HaveOccurred())
 })
 

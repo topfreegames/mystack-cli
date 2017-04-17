@@ -79,6 +79,4 @@ var getConfigCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getConfigCmd)
-	getConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Cluster name to get config")
-	getClusterCmd.MarkFlagRequired("clusterName")
 }
