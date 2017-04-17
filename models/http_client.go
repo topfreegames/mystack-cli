@@ -79,6 +79,7 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 func (c *MyStackHTTPClient) addAuthHeader(req *http.Request) {
 	auth := fmt.Sprintf("Bearer %s", c.config.Token)
 	req.Header.Add("Authorization", auth)
+	req.Host = c.config.ControllerHost
 }
 
 func ioReader(body map[string]interface{}) (*bytes.Reader, error) {

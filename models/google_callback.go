@@ -64,7 +64,7 @@ func SaveAccessToken(state, code, expectedState, env, controllerURL, controllerH
 	json.Unmarshal(body, &bodyObj)
 	token := bodyObj["token"].(string)
 
-	c := NewConfig(env, token, controllerURL)
+	c := NewConfig(env, token, controllerURL, controllerHost)
 	err = c.Write()
 	return err
 }
