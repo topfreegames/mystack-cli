@@ -10,11 +10,12 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
 	"runtime"
+
+	"github.com/satori/go.uuid"
 )
 
 func open(url string) error {
@@ -38,13 +39,15 @@ func open(url string) error {
 type Login struct {
 	OAuthState string
 	ServerURL  string
+	ServerHost string
 }
 
 //NewLogin is the Login ctor
-func NewLogin(controllerURL string) *Login {
+func NewLogin(controllerURL, controllerHost string) *Login {
 	return &Login{
 		OAuthState: randToken(),
 		ServerURL:  controllerURL,
+		ServerHost: controllerHost,
 	}
 }
 
@@ -56,7 +59,14 @@ func randToken() string {
 func (l *Login) Perform() error {
 	basePath := l.ServerURL
 	path := fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState)
-	resp, err := http.Get(path)
+	req, err := http.NewRequest("GET", path, nil)
+	if err != nil {
+		return err
+	}
+	req.Host = l.ServerHost
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}

@@ -43,14 +43,18 @@ func NewServerControl(listener net.Listener) *ServerControl {
 }
 
 //SaveAccessToken get access token from authorization code and saves locally
-func SaveAccessToken(basePath, state, code, expectedState, env, controllerURL string) error {
+func SaveAccessToken(state, code, expectedState, env, controllerURL, controllerHost string) error {
 	if state != expectedState {
 		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("invalid oauth state, expected '%s', got '%s'", expectedState, state))
 		return err
 	}
 
-	url := fmt.Sprintf("%s/access?code=%s", basePath, code)
-	resp, err := http.Get(url)
+	url := fmt.Sprintf("%s/access?code=%s", controllerURL, code)
+	req, err := http.NewRequest("GET", url, nil)
+	req.Host = controllerHost
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
