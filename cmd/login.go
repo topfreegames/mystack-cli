@@ -18,6 +18,7 @@ const port int = 57459
 var debug bool
 var quiet bool
 var controllerURL string
+var controllerHost string
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
@@ -48,6 +49,10 @@ var loginCmd = &cobra.Command{
 			"debug":     debug,
 		})
 
+		if len(controllerHost) == 0 {
+			controllerHost = controllerURL
+		}
+
 		cmdL.Debug("Creating callback server...")
 		app, err := api.NewApp(
 			host,
@@ -56,6 +61,7 @@ var loginCmd = &cobra.Command{
 			log,
 			environment,
 			controllerURL,
+			controllerHost,
 		)
 		if err != nil {
 			cmdL.WithError(err).Fatal("Failed to start server.")
@@ -76,6 +82,7 @@ var loginCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:8080", "Controllers URL")
+	loginCmd.Flags().StringVarP(&controllerHost, "controllerHost", "o", "", "Controller Host")
 	loginCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Debug mode")
 	loginCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Quiet mode (log level error)")
 }

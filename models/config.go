@@ -11,17 +11,19 @@ import (
 
 // Config struct
 type Config struct {
-	Token         string `json:"token"`
-	ControllerURL string `json:"controllerUrl"`
-	Env           string `json:"env"`
+	Token          string `json:"token"`
+	ControllerURL  string `json:"controllerUrl"`
+	ControllerHost string `json:"controllerHost"`
+	Env            string `json:"env"`
 }
 
 // NewConfig ctor
-func NewConfig(env, token, controllerURL string) *Config {
+func NewConfig(env, token, controllerURL, controllerHost string) *Config {
 	c := &Config{
-		Token:         token,
-		ControllerURL: controllerURL,
-		Env:           env,
+		Token:          token,
+		ControllerURL:  controllerURL,
+		ControllerHost: controllerHost,
+		Env:            env,
 	}
 	return c
 }

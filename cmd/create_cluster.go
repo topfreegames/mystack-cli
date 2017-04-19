@@ -7,6 +7,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
@@ -72,6 +73,14 @@ var createClusterCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Cluster '%s' successfully created\n", clusterName)
+		bodyJSON := make(map[string][]interface{})
+		json.Unmarshal(body, &bodyJSON)
+
+		printer := &models.RoutePrinter{
+			Domain: config.ControllerHost,
+			Apps:   bodyJSON["apps"],
+		}
+		printer.Print()
 	},
 }
 

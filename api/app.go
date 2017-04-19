@@ -37,14 +37,13 @@ type App struct {
 }
 
 //NewApp ctor
-func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, env, controllerURL string) (*App, error) {
+func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, env, controllerURL, controllerHost string) (*App, error) {
 	a := &App{
-		Address:       fmt.Sprintf("%s:%d", host, port),
-		Debug:         debug,
-		Logger:        logger,
-		Login:         models.NewLogin(controllerURL),
-		env:           env,
-		controllerURL: controllerURL,
+		Address: fmt.Sprintf("%s:%d", host, port),
+		Debug:   debug,
+		Logger:  logger,
+		Login:   models.NewLogin(controllerURL, controllerHost),
+		env:     env,
 	}
 	err := a.configureApp()
 	if err != nil {
@@ -112,6 +111,7 @@ func (a *App) ListenAndLoginAndServe() (io.Closer, error) {
 	}
 
 	err = a.Server.Serve(listener)
+	//TODO: do a better check, in case a real "use of closed network connection" happens
 	if err != nil && !strings.Contains(err.Error(), "use of closed network connection") {
 		listener.Close()
 		return nil, err

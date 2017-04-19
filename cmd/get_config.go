@@ -50,7 +50,8 @@ var getConfigCmd = &cobra.Command{
 			log.Fatal("clusterName must be informed with flag -c")
 		}
 		l := log.WithFields(logrus.Fields{
-			"controllerURL": config.ControllerURL,
+			"controllerURL":  config.ControllerURL,
+			"controllerHost": config.ControllerHost,
 		})
 		l.Debug("ready to get cluster config")
 		url := fmt.Sprintf("%s/cluster-configs/%s", config.ControllerURL, clusterName)
@@ -78,6 +79,4 @@ var getConfigCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getConfigCmd)
-	getConfigCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Cluster name to get config")
-	getClusterCmd.MarkFlagRequired("clusterName")
 }
