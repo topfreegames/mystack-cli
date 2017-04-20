@@ -58,9 +58,15 @@ func SaveAccessToken(state, code, expectedState, env, controllerURL, controllerH
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 	var bodyObj map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("Status: %d\nError: %s", resp.StatusCode, string(body))
+		return err
+	}
 	json.Unmarshal(body, &bodyObj)
 	token := bodyObj["token"].(string)
 

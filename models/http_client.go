@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 // MyStackHTTPClient struct
@@ -26,7 +27,12 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 	h := &MyStackHTTPClient{
 		config: config,
 	}
-	h.client = &http.Client{}
+
+	timeout := time.Duration(5 * time.Minute)
+	h.client = &http.Client{
+		Timeout: timeout,
+	}
+
 	return h
 }
 
