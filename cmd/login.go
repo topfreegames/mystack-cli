@@ -81,7 +81,7 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:8080", "Controllers URL")
+	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "http://localhost:80", "Controllers URL")
 	loginCmd.Flags().StringVarP(&controllerHost, "controllerHost", "o", "", "Controller Host")
 	loginCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Debug mode")
 	loginCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Quiet mode (log level error)")

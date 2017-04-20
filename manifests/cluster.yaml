@@ -1,0 +1,25 @@
+setup:
+  image: setup-img
+  start-deployment-timeout-seconds: 3600
+services:
+  postgres:
+    image: postgres:9.5
+    ports: 
+      - 8585:5432
+    readinessProbe:
+      command:
+        - sh
+        - -c
+        - exec pg_isready
+      periodSeconds: 5
+      startDeploymentTimeoutSeconds: 120
+apps:
+  my-app:
+    image: app-img
+    ports:
+      - 80
+    env:
+      - name: APP_VAR_1
+        value: 1
+      - name: APP_VAR_2
+        value: two
