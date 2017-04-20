@@ -54,6 +54,7 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		}
 
 		l.Error(err)
+		return
 	}
 
 	o.App.ServerControl.CloseServer <- true
