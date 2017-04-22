@@ -21,23 +21,7 @@ var getConfigCmd = &cobra.Command{
 	Short: "list or get cluster configs",
 	Long:  `list or get a cluster configs from mystack`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ll := logrus.InfoLevel
-		switch verbose {
-		case 0:
-			ll = logrus.ErrorLevel
-			break
-		case 1:
-			ll = logrus.WarnLevel
-			break
-		case 3:
-			ll = logrus.DebugLevel
-			break
-		default:
-			ll = logrus.InfoLevel
-		}
-
-		log = logrus.New()
-		log.Level = ll
+		log := createLog()
 
 		c, err := models.ReadConfig(environment)
 		if err == nil {

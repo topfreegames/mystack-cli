@@ -25,23 +25,7 @@ var loginCmd = &cobra.Command{
 	Short: "login on mystack",
 	Long:  "First login on mystack to get access on your personal stack of services running on Kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
-		ll := logrus.InfoLevel
-		switch verbose {
-		case 0:
-			ll = logrus.ErrorLevel
-			break
-		case 1:
-			ll = logrus.WarnLevel
-			break
-		case 3:
-			ll = logrus.DebugLevel
-			break
-		default:
-			ll = logrus.InfoLevel
-		}
-
-		log = logrus.New()
-		log.Level = ll
+		log := createLog()
 
 		cmdL := log.WithFields(logrus.Fields{
 			"source":    "loginCmd",

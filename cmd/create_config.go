@@ -40,19 +40,7 @@ var createConfigCmd = &cobra.Command{
 	Short: "creates a cluster config",
 	Long:  `creates a cluster config in mystack`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ll := logrus.InfoLevel
-		switch verbose {
-		case 0:
-			ll = logrus.ErrorLevel
-		case 1:
-			ll = logrus.WarnLevel
-		case 3:
-			ll = logrus.DebugLevel
-		}
-
-		var log = logrus.New()
-		log.Formatter = new(logrus.JSONFormatter)
-		log.Level = ll
+		log := createLog()
 
 		cmdL := log.WithFields(logrus.Fields{
 			"source":    "createConfigCmd",
