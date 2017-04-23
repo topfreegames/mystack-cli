@@ -9,17 +9,16 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/topfreegames/mystack-cli/models"
 )
 
-// getConfigCmd represents the get_config command
-var getConfigCmd = &cobra.Command{
-	Use:   "config",
-	Short: "list or get cluster configs",
-	Long:  `list or get a cluster configs from mystack`,
+// listConfigsCmd represents the listConfigs.go command
+var listConfigsCmd = &cobra.Command{
+	Use:   "list",
+	Short: "list cluster configs",
+	Long:  `Get the list of cluster configs already created on the Mystack-Controller`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ll := logrus.InfoLevel
 		switch verbose {
@@ -45,16 +44,11 @@ var getConfigCmd = &cobra.Command{
 		} else {
 			log.Fatal("no mystack config file found, you may need to run ./mysctl login")
 		}
-
-		if len(clusterName) == 0 {
-			log.Fatal("clusterName must be informed with flag -c")
-		}
 		l := log.WithFields(logrus.Fields{
-			"controllerURL":  config.ControllerURL,
-			"controllerHost": config.ControllerHost,
+			"controllerURL": config.ControllerURL,
 		})
-		l.Debug("ready to get cluster config")
-		url := fmt.Sprintf("%s/cluster-configs/%s", config.ControllerURL, clusterName)
+		l.Debug("ready to get cluster config list")
+		url := fmt.Sprintf("%s/cluster-configs", config.ControllerURL)
 		client := models.NewMyStackHTTPClient(config)
 		body, status, err := client.Get(url)
 		if err != nil {
@@ -67,16 +61,16 @@ var getConfigCmd = &cobra.Command{
 			return
 		}
 
-		bodyJSON := make(map[string]interface{})
+		bodyJSON := make(map[string][]interface{})
 		json.Unmarshal(body, &bodyJSON)
-		printer := &models.ObjPrinter{
-			Title: "CLUSTER-CONFIG",
-			Obj:   bodyJSON["yaml"],
+		printer := &models.ColumnPrinter{
+			Title:  "CLUSTER-NAMES",
+			Column: bodyJSON["names"],
 		}
 		printer.Print()
 	},
 }
 
 func init() {
-	getCmd.AddCommand(getConfigCmd)
+	getCmd.AddCommand(listConfigsCmd)
 }

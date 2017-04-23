@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/miekg/dns"
@@ -51,7 +52,7 @@ func (d *DNSServer) configureDNSServer(routerURL string) error {
 
 func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
-		if b == a {
+		if strings.Contains(a, b) {
 			return true
 		}
 	}

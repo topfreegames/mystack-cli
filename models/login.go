@@ -10,11 +10,12 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
 	"runtime"
+
+	"github.com/satori/go.uuid"
 )
 
 func open(url string) error {
@@ -38,13 +39,15 @@ func open(url string) error {
 type Login struct {
 	OAuthState string
 	ServerURL  string
+	ServerHost string
 }
 
 //NewLogin is the Login ctor
-func NewLogin(controllerURL string) *Login {
+func NewLogin(controllerURL, controllerHost string) *Login {
 	return &Login{
 		OAuthState: randToken(),
 		ServerURL:  controllerURL,
+		ServerHost: controllerHost,
 	}
 }
 
@@ -55,13 +58,21 @@ func randToken() string {
 //Perform makes a request to googleapis
 func (l *Login) Perform() error {
 	basePath := l.ServerURL
-	resp, err := http.Get(fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState))
+	path := fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState)
+	req, err := http.NewRequest("GET", path, nil)
+	if err != nil {
+		return err
+	}
+	req.Host = l.ServerHost
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Status code %d when GET request to controller server", resp.StatusCode)
+		return fmt.Errorf("status code %d when GET request to controller server", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
