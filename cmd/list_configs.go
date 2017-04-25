@@ -7,18 +7,18 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/topfreegames/mystack-cli/models"
 )
 
-// deleteClusterCmd represents the delete_cluster command
-var deleteClusterCmd = &cobra.Command{
-	Use:   "cluster",
-	Short: "deletes a cluster",
-	Long:  `deletes a cluster in mystack`,
+// listConfigsCmd represents the listConfigs.go command
+var listConfigsCmd = &cobra.Command{
+	Use:   "list",
+	Short: "list cluster configs",
+	Long:  `Get the list of cluster configs already created on the Mystack-Controller`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
@@ -31,16 +31,10 @@ var deleteClusterCmd = &cobra.Command{
 		l := log.WithFields(logrus.Fields{
 			"controllerURL": config.ControllerURL,
 		})
-		l.Debug("deleting cluster")
-		createClusterURL := fmt.Sprintf("%s/clusters/%s/delete", config.ControllerURL, clusterName)
+		l.Debug("ready to get cluster config list")
+		url := fmt.Sprintf("%s/cluster-configs", config.ControllerURL)
 		client := models.NewMyStackHTTPClient(config)
-
-		if err != nil {
-			l.WithError(err).Fatalf("error during reading file path '%s'", filePath)
-		}
-		fmt.Println("Deleting cluster")
-		fmt.Println("This may take a few minutes...")
-		body, status, err := client.Delete(createClusterURL)
+		body, status, err := client.Get(url)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -51,10 +45,16 @@ var deleteClusterCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Printf("Cluster '%s' successfully deleted\n", clusterName)
+		bodyJSON := make(map[string][]interface{})
+		json.Unmarshal(body, &bodyJSON)
+		printer := &models.ColumnPrinter{
+			Title:  "CLUSTER-NAMES",
+			Column: bodyJSON["names"],
+		}
+		printer.Print()
 	},
 }
 
 func init() {
-	deleteCmd.AddCommand(deleteClusterCmd)
+	getCmd.AddCommand(listConfigsCmd)
 }
