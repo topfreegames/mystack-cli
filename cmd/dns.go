@@ -35,7 +35,7 @@ func parseBody(body []byte, status int) (*domainList, error) {
 		return nil, fmt.Errorf("Error: %s\nDescription: %s", errorBody["error"], errorBody["description"])
 	}
 
-	bodyMap := make(map[string][]string)
+	bodyMap := make(map[string]map[string][]string)
 	err := json.Unmarshal(body, &bodyMap)
 	if err != nil {
 		return nil, err
@@ -43,8 +43,8 @@ func parseBody(body []byte, status int) (*domainList, error) {
 
 	domainList := &domainList{}
 
-	for _, list := range bodyMap {
-		domainList.Domains = append(domainList.Domains, list...)
+	for _, apps := range bodyMap["domains"] {
+		domainList.Domains = append(domainList.Domains, apps...)
 	}
 
 	return domainList, nil

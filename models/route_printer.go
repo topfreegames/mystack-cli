@@ -9,21 +9,24 @@ package models
 
 import (
 	"fmt"
-	"strings"
+	"os"
+	"text/tabwriter"
 )
 
 //RoutePrinter implements the Printer interface
 type RoutePrinter struct {
-	Apps   []interface{}
+	Apps   map[string][]string
 	Domain string
 }
 
 //Print formats and prints a JSON
 func (j *RoutePrinter) Print() {
-	fmt.Println("APP ROUTES")
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
-	domain := strings.TrimPrefix(j.Domain, "controller.")
-	for _, item := range j.Apps {
-		fmt.Printf("%s.%s\n", item, domain)
+	fmt.Fprintln(w, "APP ROUTES")
+	for name, domains := range j.Apps {
+		fmt.Fprintf(w, "%s:\t%v\n", name, domains)
 	}
+
+	w.Flush()
 }

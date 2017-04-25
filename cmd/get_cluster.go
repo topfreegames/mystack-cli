@@ -51,11 +51,15 @@ var getClusterCmd = &cobra.Command{
 			return
 		}
 
-		bodyJSON := make(map[string][]interface{})
-		json.Unmarshal(body, &bodyJSON)
+		bodyJSON := make(map[string]map[string][]string)
+		err = json.Unmarshal(body, &bodyJSON)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
 		printer := &models.RoutePrinter{
 			Domain: config.ControllerHost,
-			Apps:   bodyJSON["apps"],
+			Apps:   bodyJSON["domains"],
 		}
 		printer.Print()
 	},
