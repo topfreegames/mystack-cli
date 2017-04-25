@@ -74,7 +74,7 @@ var dnsCmd = &cobra.Command{
 		})
 		l.Debug("starting dns server, querying mystack controller for domains and pointTo")
 		l.Debug("grabbing mystack custom domain list and router ip from controller")
-		getDNSConfigURL := fmt.Sprintf("%s/cluster-configs/%s/domains", config.ControllerURL, clusterName)
+		getDNSConfigURL := fmt.Sprintf("%s/clusters/%s/apps", config.ControllerURL, clusterName)
 		client := models.NewMyStackHTTPClient(config)
 		body, status, err := client.Get(getDNSConfigURL)
 		if err != nil {

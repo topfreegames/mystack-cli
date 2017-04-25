@@ -45,8 +45,8 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		code,
 		o.App.Login.OAuthState,
 		o.App.env,
-		o.App.Login.ServerURL,
-		o.App.Login.ServerHost,
+		o.App.Login.ControllerURL,
+		o.App.Login.ControllerHost,
 	)
 	if err != nil {
 		if err, ok := err.(*errors.OAuthError); ok {
