@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/miekg/dns"
@@ -18,15 +19,17 @@ type DNSServer struct {
 	logger       *logrus.Logger
 	PointTo      string
 	port         int
+	RouterDomain string
 }
 
 // NewDNSServer ctor
-func NewDNSServer(domains []string, forwardToDNS, routerURL string, port int, logger *logrus.Logger) (*DNSServer, error) {
+func NewDNSServer(domains []string, forwardToDNS, routerURL, routerDomain string, port int, logger *logrus.Logger) (*DNSServer, error) {
 	d := &DNSServer{
 		Domains:      domains,
 		forwardToDNS: forwardToDNS,
 		logger:       logger,
 		port:         port,
+		RouterDomain: routerDomain,
 	}
 	err := d.configureDNSServer(routerURL)
 	if err != nil {
@@ -49,9 +52,10 @@ func (d *DNSServer) configureDNSServer(routerURL string) error {
 	return nil
 }
 
-func stringInSlice(a string, list []string) bool {
+func (d *DNSServer) stringInSlice(a string, list []string) bool {
 	for _, b := range list {
-		if b == a {
+		parsedA := strings.TrimSuffix(a, ".")
+		if b == parsedA || strings.HasSuffix(parsedA, d.RouterDomain) {
 			return true
 		}
 	}
@@ -66,7 +70,7 @@ func (d *DNSServer) parseQuery(m *dns.Msg) {
 		switch q.Qtype {
 		case dns.TypeA:
 			l.Debugf("Query for %s", q.Name)
-			if stringInSlice(q.Name, d.Domains) {
+			if d.stringInSlice(q.Name, d.Domains) {
 				rr, err := dns.NewRR(fmt.Sprintf("%s A %s", q.Name, d.PointTo))
 				if err == nil {
 					m.Answer = append(m.Answer, rr)

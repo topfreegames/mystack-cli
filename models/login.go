@@ -10,11 +10,12 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
 	"runtime"
+
+	"github.com/satori/go.uuid"
 )
 
 func open(url string) error {
@@ -36,15 +37,16 @@ func open(url string) error {
 
 //Login gets an authorization code from google
 type Login struct {
-	OAuthState string
-	ServerURL  string
+	OAuthState     string
+	ControllerURL  string
+	ControllerHost string
 }
 
 //NewLogin is the Login ctor
 func NewLogin(controllerURL string) *Login {
 	return &Login{
-		OAuthState: randToken(),
-		ServerURL:  controllerURL,
+		OAuthState:    randToken(),
+		ControllerURL: controllerURL,
 	}
 }
 
@@ -53,25 +55,33 @@ func randToken() string {
 }
 
 //Perform makes a request to googleapis
-func (l *Login) Perform() error {
-	basePath := l.ServerURL
-	resp, err := http.Get(fmt.Sprintf("%s/login?state=%s", basePath, l.OAuthState))
+func (l *Login) Perform() (string, error) {
+	path := fmt.Sprintf("%s/login?state=%s", l.ControllerURL, l.OAuthState)
+	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
-		return err
+		return "", err
+	}
+	req.Host = "login"
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Status code %d when GET request to controller server", resp.StatusCode)
+		return "", fmt.Errorf("status code %d when GET request to controller server", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
-	var bodyObj map[string]interface{}
+	var bodyObj map[string]string
 	json.Unmarshal(body, &bodyObj)
-	url := bodyObj["url"].(string)
+	url := bodyObj["url"]
+	controllerHost := bodyObj["controllerHost"]
 
 	err = open(url)
 
-	return err
+	return controllerHost, err
 }

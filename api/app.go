@@ -12,6 +12,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
@@ -38,12 +39,11 @@ type App struct {
 //NewApp ctor
 func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, env, controllerURL string) (*App, error) {
 	a := &App{
-		Address:       fmt.Sprintf("%s:%d", host, port),
-		Debug:         debug,
-		Logger:        logger,
-		Login:         models.NewLogin(controllerURL),
-		env:           env,
-		controllerURL: controllerURL,
+		Address: fmt.Sprintf("%s:%d", host, port),
+		Debug:   debug,
+		Logger:  logger,
+		Login:   models.NewLogin(controllerURL),
+		env:     env,
 	}
 	err := a.configureApp()
 	if err != nil {
@@ -105,13 +105,16 @@ func (a *App) ListenAndLoginAndServe() (io.Closer, error) {
 
 	a.ServerControl = models.NewServerControl(listener)
 
-	err = a.Login.Perform()
+	controllerHost, err := a.Login.Perform()
 	if err != nil {
 		return nil, err
 	}
 
+	a.Login.ControllerHost = controllerHost
+
 	err = a.Server.Serve(listener)
-	if err != nil {
+	//TODO: do a better check, in case a real "use of closed network connection" happens
+	if err != nil && !strings.Contains(err.Error(), "use of closed network connection") {
 		listener.Close()
 		return nil, err
 	}

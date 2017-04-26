@@ -8,10 +8,26 @@
 package api
 
 import (
+	"io"
+	"net/http"
+
 	"github.com/topfreegames/mystack-cli/errors"
 	"github.com/topfreegames/mystack-cli/models"
-	"net/http"
 )
+
+const index = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mystack</title>
+</head>
+<body>
+  <h1>Thanks for logging in</h1>
+  You can go back to your terminal
+</body>
+</html>
+`
 
 //OAuthCallbackHandler handles the callback after user approves/deny auth
 type OAuthCallbackHandler struct {
@@ -24,14 +40,26 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	code := r.FormValue("code")
 	l := loggerFromContext(r.Context())
 
-	err := models.SaveAccessToken(o.App.Login.ServerURL, state, code, o.App.Login.OAuthState, o.App.env, o.App.controllerURL)
+	err := models.SaveAccessToken(
+		state,
+		code,
+		o.App.Login.OAuthState,
+		o.App.env,
+		o.App.Login.ControllerURL,
+		o.App.Login.ControllerHost,
+	)
 	if err != nil {
 		if err, ok := err.(*errors.OAuthError); ok {
 			l.Error(err.Serialize())
 		}
 
 		l.Error(err)
+		return
 	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, index)
 
 	o.App.ServerControl.CloseServer <- true
 }
