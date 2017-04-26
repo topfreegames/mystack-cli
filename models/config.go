@@ -14,15 +14,17 @@ type Config struct {
 	Token          string `json:"token"`
 	ControllerURL  string `json:"controllerUrl"`
 	ControllerHost string `json:"controllerHost"`
+	LoggerHost     string `json:"loggerHost"`
 	Env            string `json:"env"`
 }
 
 // NewConfig ctor
-func NewConfig(env, token, controllerURL, controllerHost string) *Config {
+func NewConfig(env, token, controllerURL string, hosts map[string]string) *Config {
 	c := &Config{
 		Token:          token,
 		ControllerURL:  controllerURL,
-		ControllerHost: controllerHost,
+		ControllerHost: hosts["controller"],
+		LoggerHost:     hosts["logger"],
 		Env:            env,
 	}
 	return c

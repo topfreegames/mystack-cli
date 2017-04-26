@@ -34,6 +34,7 @@ type App struct {
 	Login         *models.Login
 	env           string
 	controllerURL string
+	Hosts         map[string]string
 }
 
 //NewApp ctor
@@ -105,12 +106,12 @@ func (a *App) ListenAndLoginAndServe() (io.Closer, error) {
 
 	a.ServerControl = models.NewServerControl(listener)
 
-	controllerHost, err := a.Login.Perform()
+	hosts, err := a.Login.Perform()
 	if err != nil {
 		return nil, err
 	}
 
-	a.Login.ControllerHost = controllerHost
+	a.Hosts = hosts
 
 	err = a.Server.Serve(listener)
 	//TODO: do a better check, in case a real "use of closed network connection" happens
