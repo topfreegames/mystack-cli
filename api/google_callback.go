@@ -8,7 +8,7 @@
 package api
 
 import (
-	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/topfreegames/mystack-cli/errors"
@@ -57,6 +57,9 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, index)
+
 	o.App.ServerControl.CloseServer <- true
-	fmt.Fprintf(w, index)
 }
