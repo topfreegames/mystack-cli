@@ -37,13 +37,13 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 }
 
 // Get does a get request
-func (c *MyStackHTTPClient) Get(url string) ([]byte, int, error) {
+func (c *MyStackHTTPClient) Get(url, host string) ([]byte, int, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	c.addAuthHeader(req)
+	c.addAuthHeader(req, host)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, 0, err
@@ -69,7 +69,7 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 	}
 	req.Close = true
 
-	c.addAuthHeader(req)
+	c.addAuthHeader(req, c.config.ControllerHost)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, 0, err
@@ -82,10 +82,13 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 	return responseBody, res.StatusCode, nil
 }
 
-func (c *MyStackHTTPClient) addAuthHeader(req *http.Request) {
+func (c *MyStackHTTPClient) addAuthHeader(req *http.Request, host string) {
 	auth := fmt.Sprintf("Bearer %s", c.config.Token)
 	req.Header.Add("Authorization", auth)
-	req.Host = c.config.ControllerHost
+
+	if host != "" {
+		req.Host = host
+	}
 }
 
 func ioReader(body map[string]interface{}) (*bytes.Reader, error) {
@@ -104,7 +107,7 @@ func (c *MyStackHTTPClient) Delete(url string) ([]byte, int, error) {
 		return nil, 0, err
 	}
 
-	c.addAuthHeader(req)
+	c.addAuthHeader(req, c.config.ControllerHost)
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, 0, err

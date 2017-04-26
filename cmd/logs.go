@@ -7,7 +7,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
@@ -15,11 +14,13 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
-// getClusterCmd represents the get_cluster command
-var getClusterCmd = &cobra.Command{
-	Use:   "cluster",
-	Short: "list or get clusters",
-	Long:  `list or get cluster in mystack`,
+var app string
+
+// logsCmd represents the logs command
+var logsCmd = &cobra.Command{
+	Use:   "logs",
+	Short: "Get app logs",
+	Long:  `Get apps' logs running o Mystack user's cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
@@ -30,17 +31,18 @@ var getClusterCmd = &cobra.Command{
 			log.Fatal("no mystack config file found, you may need to run ./mysctl login")
 		}
 
-		if len(clusterName) == 0 {
-			log.Fatal("clusterName must be informed with flag -c")
+		if len(app) == 0 {
+			log.Fatal("app name must be informed with flag -a")
 		}
 		l := log.WithFields(logrus.Fields{
 			"controllerURL":  config.ControllerURL,
 			"controllerHost": config.ControllerHost,
+			"loggerHost":     config.LoggerHost,
 		})
-		l.Debug("ready to get cluster config")
-		url := fmt.Sprintf("%s/clusters/%s/apps", config.ControllerURL, clusterName)
+		l.Debug("ready to get app logs")
+		url := fmt.Sprintf("%s/logs/apps/%s", config.ControllerURL, app)
 		client := models.NewMyStackHTTPClient(config)
-		body, status, err := client.Get(url, config.ControllerHost)
+		body, status, err := client.Get(url, config.LoggerHost)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -51,20 +53,12 @@ var getClusterCmd = &cobra.Command{
 			return
 		}
 
-		bodyJSON := make(map[string]map[string][]string)
-		err = json.Unmarshal(body, &bodyJSON)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		printer := &models.RoutePrinter{
-			Domain: config.ControllerHost,
-			Apps:   bodyJSON["domains"],
-		}
+		printer := models.NewLogPrinter(body)
 		printer.Print()
 	},
 }
 
 func init() {
-	getCmd.AddCommand(getClusterCmd)
+	RootCmd.AddCommand(logsCmd)
+	logsCmd.Flags().StringVarP(&app, "app", "a", "", "App name to get its logs")
 }

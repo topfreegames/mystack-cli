@@ -40,7 +40,7 @@ var getConfigCmd = &cobra.Command{
 		l.Debug("ready to get cluster config")
 		url := fmt.Sprintf("%s/cluster-configs/%s", config.ControllerURL, clusterName)
 		client := models.NewMyStackHTTPClient(config)
-		body, status, err := client.Get(url)
+		body, status, err := client.Get(url, config.ControllerHost)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

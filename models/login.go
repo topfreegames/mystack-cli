@@ -37,9 +37,8 @@ func open(url string) error {
 
 //Login gets an authorization code from google
 type Login struct {
-	OAuthState     string
-	ControllerURL  string
-	ControllerHost string
+	OAuthState    string
+	ControllerURL string
 }
 
 //NewLogin is the Login ctor
@@ -55,22 +54,22 @@ func randToken() string {
 }
 
 //Perform makes a request to googleapis
-func (l *Login) Perform() (string, error) {
+func (l *Login) Perform() (map[string]string, error) {
 	path := fmt.Sprintf("%s/login?state=%s", l.ControllerURL, l.OAuthState)
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req.Host = "login"
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("status code %d when GET request to controller server", resp.StatusCode)
+		return nil, fmt.Errorf("status code %d when GET request to controller server", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
@@ -79,9 +78,14 @@ func (l *Login) Perform() (string, error) {
 	var bodyObj map[string]string
 	json.Unmarshal(body, &bodyObj)
 	url := bodyObj["url"]
-	controllerHost := bodyObj["controllerHost"]
 
 	err = open(url)
+	if err != nil {
+		return nil, err
+	}
 
-	return controllerHost, err
+	return map[string]string{
+		"controller": bodyObj["controllerHost"],
+		"logger":     bodyObj["loggerHost"],
+	}, nil
 }
