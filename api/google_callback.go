@@ -40,6 +40,8 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	code := r.FormValue("code")
 	l := loggerFromContext(r.Context())
 
+	l.Debugf("Returned state %s and code %s", state, code)
+
 	err := models.SaveAccessToken(
 		state,
 		code,

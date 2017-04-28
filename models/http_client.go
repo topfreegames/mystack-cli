@@ -28,9 +28,8 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 		config: config,
 	}
 
-	timeout := time.Duration(5 * time.Minute)
 	h.client = &http.Client{
-		Timeout: timeout,
+		Timeout: 10 * time.Minute,
 	}
 
 	return h
@@ -72,7 +71,7 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 	c.addAuthHeader(req, c.config.ControllerHost)
 	res, err := c.client.Do(req)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("Error creating cluster")
 	}
 	defer res.Body.Close()
 	responseBody, err := ioutil.ReadAll(res.Body)
