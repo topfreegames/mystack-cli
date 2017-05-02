@@ -24,7 +24,7 @@ var config *models.Config
 
 // RootCmd is the root command for mystack CLI application
 var RootCmd = &cobra.Command{
-	Use:   "mysctl",
+	Use:   "mystack",
 	Short: "mystack handles manages your personal cluster",
 	Long:  `Use mystack to start your services on kubernetes.`,
 }

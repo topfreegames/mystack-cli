@@ -51,7 +51,7 @@ var createConfigCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run ./mysctl login")
+			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run ./mystack login")
 		}
 
 		client := models.NewMyStackHTTPClient(config)

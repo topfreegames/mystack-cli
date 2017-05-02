@@ -27,7 +27,7 @@ var getConfigCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mysctl login")
+			log.Fatal("no mystack config file found, you may need to run ./mystack login")
 		}
 
 		if len(clusterName) == 0 {
