@@ -14,23 +14,32 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
+var follow bool
+
 func getLog(l *logrus.Entry, app string, config *models.Config) {
 	l.Debug("ready to get app logs")
-	url := fmt.Sprintf("%s/logs/apps/%s", config.ControllerURL, app)
+	var url string
 	client := models.NewMyStackHTTPClient(config)
-	body, status, err := client.Get(url, config.LoggerHost)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	if follow {
+		url = fmt.Sprintf("%s/logs/apps/%s?follow=true", config.LoggerHost, app)
+		client.GetToStdOut(url, config.LoggerHost)
+	} else {
+		url = fmt.Sprintf("%s/logs/apps/%s", config.LoggerHost, app)
+		body, status, err := client.Get(url, config.LoggerHost)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	if status != 200 {
-		printer := models.NewErrorPrinter(body, status)
+		if status != 200 {
+			printer := models.NewErrorPrinter(body, status)
+			printer.Print()
+			return
+		}
+
+		printer := models.NewLogPrinter(body, app)
 		printer.Print()
-		return
-	}
 
-	printer := models.NewLogPrinter(body, app)
-	printer.Print()
+	}
 }
 
 // logsCmd represents the logs command
@@ -69,5 +78,6 @@ var logsCmd = &cobra.Command{
 }
 
 func init() {
+	logsCmd.Flags().BoolVarP(&follow, "follow", "f", false, "use if you want to follow the logs of the application")
 	RootCmd.AddCommand(logsCmd)
 }

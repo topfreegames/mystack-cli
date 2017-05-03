@@ -8,6 +8,7 @@
 package models
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -53,6 +54,29 @@ func (c *MyStackHTTPClient) Get(url, host string) ([]byte, int, error) {
 		return nil, 0, err
 	}
 	return body, res.StatusCode, nil
+}
+
+// GetToStdOut streams the content received from server to stdout
+func (c *MyStackHTTPClient) GetToStdOut(url, host string) error {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	c.addAuthHeader(req, host)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	reader := bufio.NewReader(res.Body)
+	for {
+		line, err := reader.ReadBytes('\n')
+		if err != nil {
+			return err
+		}
+		fmt.Printf(string(line))
+	}
 }
 
 // Put does a put request
