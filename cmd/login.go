@@ -26,15 +26,17 @@ var loginCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
-		if controllerURL == "" {
-			log.Fatal("inform controller url with -s flag")
-		}
-
 		cmdL := log.WithFields(logrus.Fields{
 			"source":    "loginCmd",
 			"operation": "Run",
 			"debug":     debug,
 		})
+
+		if len(args) == 0 {
+			cmdL.Fatal("inform controller url")
+		}
+
+		controllerURL = args[0]
 
 		cmdL.Debug("Creating callback server...")
 		app, err := api.NewApp(
@@ -63,7 +65,6 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringVarP(&controllerURL, "controllerURL", "s", "", "Controllers URL")
 	loginCmd.Flags().BoolVarP(&debug, "debug", "d", false, "Debug mode")
 	loginCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Quiet mode (log level error)")
 }

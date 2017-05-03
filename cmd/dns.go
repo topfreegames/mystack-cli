@@ -58,15 +58,18 @@ var dnsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
-		if clusterName == "" {
-			log.Fatal("inform cluster name with -c flag")
+		if len(args) == 0 {
+			fmt.Println("inform cluster name, e.g. './mystack dns mycluster'")
+			return
 		}
+
+		clusterName := args[0]
 
 		c, err := models.ReadConfig(environment)
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mystack login:", err)
+			log.WithError(err).Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
 		l := log.WithFields(logrus.Fields{
 			"forwardToDNS":  forwardToDNS,
@@ -98,6 +101,5 @@ var dnsCmd = &cobra.Command{
 func init() {
 	dnsCmd.Flags().StringVarP(&forwardToDNS, "forwartToDNS", "f", "8.8.8.8:53", "The DNS to forward requests to when not in mystack custom domain list")
 	dnsCmd.Flags().IntVarP(&dnsPort, "port", "p", 53, "The port on which UDP Server will listen")
-	dnsCmd.Flags().StringVarP(&clusterName, "clusterName", "c", "", "Name of the cluster to be created")
 	RootCmd.AddCommand(dnsCmd)
 }

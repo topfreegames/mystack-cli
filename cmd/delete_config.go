@@ -15,47 +15,61 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
+func deleteConfig(l *logrus.Entry, clusterName string, config *models.Config) {
+	client := models.NewMyStackHTTPClient(config)
+	deleteClusterURL := fmt.Sprintf(
+		"%s/cluster-configs/%s/remove",
+		config.ControllerURL,
+		clusterName,
+	)
+
+	body, status, err := client.Delete(deleteClusterURL)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to execute request to '%s'", config.ControllerURL)
+		l.WithError(err).Fatal(msg)
+		os.Exit(1)
+	}
+
+	if status != 200 && status != 201 {
+		printer := models.NewErrorPrinter(body, status)
+		printer.Print()
+		return
+	}
+
+	fmt.Printf("Cluster config '%s' successfully deleted\n", clusterName)
+}
+
+func DeleteConfigRun(cmd *cobra.Command, args []string) {
+	log := createLog()
+
+	l := log.WithFields(logrus.Fields{
+		"source":    "createConfigCmd",
+		"operation": "Run",
+	})
+
+	c, err := models.ReadConfig(environment)
+	if err == nil {
+		config = c
+	} else {
+		l.WithError(err).Fatal("no mystack config file found, you may need to run './mystack login'")
+	}
+
+	if len(args) == 0 {
+		fmt.Println("inform cluster name, e.g. './mystack delete config myconfig'")
+		return
+	}
+
+	for _, clusterName := range args {
+		deleteConfig(l, clusterName, config)
+	}
+}
+
 // delete_configCmd represents the delete_config command
 var deleteConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "deletes a config",
 	Long:  `deletes a config in mystack`,
-	Run: func(cmd *cobra.Command, args []string) {
-		log := createLog()
-
-		cmdL := log.WithFields(logrus.Fields{
-			"source":    "createConfigCmd",
-			"operation": "Run",
-		})
-
-		c, err := models.ReadConfig(environment)
-		if err == nil {
-			config = c
-		} else {
-			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run ./mystack login")
-		}
-
-		client := models.NewMyStackHTTPClient(config)
-		deleteClusterURL := fmt.Sprintf("%s/cluster-configs/%s/remove", c.ControllerURL, clusterName)
-		if err != nil {
-			cmdL.WithError(err).Fatalf("error during reading file path '%s'", filePath)
-		}
-
-		body, status, err := client.Delete(deleteClusterURL)
-		if err != nil {
-			msg := fmt.Sprintf("Failed to execute request to '%s'", c.ControllerURL)
-			cmdL.WithError(err).Fatal(msg)
-			os.Exit(1)
-		}
-
-		if status != 200 && status != 201 {
-			printer := models.NewErrorPrinter(body, status)
-			printer.Print()
-			return
-		}
-
-		fmt.Printf("Cluster config '%s' successfully deleted\n", clusterName)
-	},
+	Run:   DeleteConfigRun,
 }
 
 func init() {

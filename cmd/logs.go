@@ -14,7 +14,24 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
-var app string
+func getLog(l *logrus.Entry, app string, config *models.Config) {
+	l.Debug("ready to get app logs")
+	url := fmt.Sprintf("%s/logs/apps/%s", config.ControllerURL, app)
+	client := models.NewMyStackHTTPClient(config)
+	body, status, err := client.Get(url, config.LoggerHost)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if status != 200 {
+		printer := models.NewErrorPrinter(body, status)
+		printer.Print()
+		return
+	}
+
+	printer := models.NewLogPrinter(body, app)
+	printer.Print()
+}
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -28,37 +45,29 @@ var logsCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mystack login")
+			log.Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
 
-		if len(app) == 0 {
-			log.Fatal("app name must be informed with flag -a")
-		}
 		l := log.WithFields(logrus.Fields{
 			"controllerURL":  config.ControllerURL,
 			"controllerHost": config.ControllerHost,
 			"loggerHost":     config.LoggerHost,
 		})
-		l.Debug("ready to get app logs")
-		url := fmt.Sprintf("%s/logs/apps/%s", config.ControllerURL, app)
-		client := models.NewMyStackHTTPClient(config)
-		body, status, err := client.Get(url, config.LoggerHost)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
 
-		if status != 200 {
-			printer := models.NewErrorPrinter(body, status)
-			printer.Print()
+		if len(args) == 0 {
+			fmt.Println("inform app name, e.g. './mystack logs myapp'")
 			return
 		}
 
-		printer := models.NewLogPrinter(body)
-		printer.Print()
+		for i, app := range args {
+			getLog(l, app, config)
+			if i < len(args)-1 {
+				fmt.Println("")
+			}
+		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(logsCmd)
-	logsCmd.Flags().StringVarP(&app, "app", "a", "", "App name to get its logs")
 }

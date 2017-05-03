@@ -13,16 +13,19 @@ import (
 //LogPrinter implements the Printer interface
 type LogPrinter struct {
 	Message string
+	Title   string
 }
 
 //NewLogPrinter is the LogPrinter ctor
-func NewLogPrinter(body []byte) *LogPrinter {
+func NewLogPrinter(body []byte, title string) *LogPrinter {
 	return &LogPrinter{
 		Message: string(body),
+		Title:   title,
 	}
 }
 
 //Print prints log
 func (l *LogPrinter) Print() {
+	fmt.Println(l.Title)
 	fmt.Println(l.Message)
 }

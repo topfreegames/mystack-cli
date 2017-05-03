@@ -14,6 +14,28 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
+func deleteCluster(l *logrus.Entry, clusterName string, config *models.Config) {
+	l.Debug("deleting cluster")
+	deleteClusterURL := fmt.Sprintf("%s/clusters/%s/delete", config.ControllerURL, clusterName)
+	client := models.NewMyStackHTTPClient(config)
+
+	fmt.Println("Deleting cluster", clusterName)
+	fmt.Println("This may take a few minutes...")
+
+	body, status, err := client.Delete(deleteClusterURL)
+	if err != nil {
+		l.Fatal(err.Error())
+	}
+
+	if status != 200 {
+		printer := models.NewErrorPrinter(body, status)
+		printer.Print()
+		return
+	}
+
+	fmt.Printf("Cluster '%s' successfully deleted\n", clusterName)
+}
+
 // deleteClusterCmd represents the delete_cluster command
 var deleteClusterCmd = &cobra.Command{
 	Use:   "cluster",
@@ -26,32 +48,20 @@ var deleteClusterCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mystack login")
+			log.Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
+
 		l := log.WithFields(logrus.Fields{
 			"controllerURL": config.ControllerURL,
 		})
-		l.Debug("deleting cluster")
-		createClusterURL := fmt.Sprintf("%s/clusters/%s/delete", config.ControllerURL, clusterName)
-		client := models.NewMyStackHTTPClient(config)
 
-		if err != nil {
-			l.WithError(err).Fatalf("error during reading file path '%s'", filePath)
-		}
-		fmt.Println("Deleting cluster")
-		fmt.Println("This may take a few minutes...")
-		body, status, err := client.Delete(createClusterURL)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		if status != 200 {
-			printer := models.NewErrorPrinter(body, status)
-			printer.Print()
+		if len(args) == 0 {
+			fmt.Println("inform cluster name, e.g. './mystack delete cluster mycluster'")
 			return
 		}
 
-		fmt.Printf("Cluster '%s' successfully deleted\n", clusterName)
+		clusterName := args[0]
+		deleteCluster(l, clusterName, config)
 	},
 }
 

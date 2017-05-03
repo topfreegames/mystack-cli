@@ -11,12 +11,14 @@ import "fmt"
 
 //ObjPrinter implements the Printer interface
 type ObjPrinter struct {
-	Title string
-	Obj   interface{}
+	Title       string
+	ClusterName string
+	Obj         interface{}
 }
 
 //Print formats and prints a JSON
 func (j *ObjPrinter) Print() {
 	fmt.Println(j.Title)
+	fmt.Printf("Cluster name '%s'\n", j.ClusterName)
 	fmt.Println(j.Obj)
 }
