@@ -15,6 +15,34 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
+func getCluster(l *logrus.Entry, clusterName string, config *models.Config) {
+	l.Debug("ready to get cluster config")
+	url := fmt.Sprintf("%s/clusters/%s/apps", config.ControllerURL, clusterName)
+	client := models.NewMyStackHTTPClient(config)
+	body, status, err := client.Get(url, config.ControllerHost)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if status != 200 {
+		printer := models.NewErrorPrinter(body, status)
+		printer.Print()
+		return
+	}
+
+	bodyJSON := make(map[string]map[string][]string)
+	err = json.Unmarshal(body, &bodyJSON)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	printer := &models.RoutePrinter{
+		Domain: config.ControllerHost,
+		Apps:   bodyJSON["domains"],
+	}
+	printer.Print()
+}
+
 // getClusterCmd represents the get_cluster command
 var getClusterCmd = &cobra.Command{
 	Use:   "cluster",
@@ -27,41 +55,20 @@ var getClusterCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mystack login")
+			log.Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
 
-		if len(clusterName) == 0 {
-			log.Fatal("clusterName must be informed with flag -c")
-		}
 		l := log.WithFields(logrus.Fields{
 			"controllerURL":  config.ControllerURL,
 			"controllerHost": config.ControllerHost,
 		})
-		l.Debug("ready to get cluster config")
-		url := fmt.Sprintf("%s/clusters/%s/apps", config.ControllerURL, clusterName)
-		client := models.NewMyStackHTTPClient(config)
-		body, status, err := client.Get(url, config.ControllerHost)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
 
-		if status != 200 {
-			printer := models.NewErrorPrinter(body, status)
-			printer.Print()
+		if len(args) == 0 {
+			fmt.Println("cluster name must be informed, e.g './mystack get cluster mycluster'")
 			return
 		}
 
-		bodyJSON := make(map[string]map[string][]string)
-		err = json.Unmarshal(body, &bodyJSON)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		printer := &models.RoutePrinter{
-			Domain: config.ControllerHost,
-			Apps:   bodyJSON["domains"],
-		}
-		printer.Print()
+		getCluster(l, args[0], c)
 	},
 }
 

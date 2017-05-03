@@ -20,6 +20,38 @@ func loading() {
 	fmt.Println("This may take a few minutes...")
 }
 
+func createCluster(l *logrus.Entry, clusterName string, config *models.Config) {
+	l.Debug("creating cluster")
+	createClusterURL := fmt.Sprintf("%s/clusters/%s/create", config.ControllerURL, clusterName)
+	client := models.NewMyStackHTTPClient(config)
+
+	loading()
+	body, status, err := client.Put(createClusterURL, nil)
+	if err != nil {
+		l.Fatal(err.Error())
+	}
+
+	if status != 200 {
+		printer := models.NewErrorPrinter(body, status)
+		printer.Print()
+		return
+	}
+
+	fmt.Printf("Cluster '%s' successfully created\n", clusterName)
+
+	bodyJSON := make(map[string]map[string][]string)
+	err = json.Unmarshal(body, &bodyJSON)
+	if err != nil {
+		l.Fatal(err.Error())
+	}
+
+	printer := &models.RoutePrinter{
+		Domain: config.ControllerHost,
+		Apps:   bodyJSON["domains"],
+	}
+	printer.Print()
+}
+
 // clusterCmd represents the cluster command
 var createClusterCmd = &cobra.Command{
 	Use:   "cluster",
@@ -32,43 +64,20 @@ var createClusterCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			log.Fatal("no mystack config file found, you may need to run ./mystack login")
+			log.WithError(err).Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
+
 		l := log.WithFields(logrus.Fields{
 			"controllerURL": config.ControllerURL,
 		})
-		l.Debug("creating cluster")
-		createClusterURL := fmt.Sprintf("%s/clusters/%s/create", config.ControllerURL, clusterName)
-		client := models.NewMyStackHTTPClient(config)
 
-		if err != nil {
-			l.WithError(err).Fatalf("error during reading file path '%s'", filePath)
-		}
-		loading()
-		body, status, err := client.Put(createClusterURL, nil)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		if status != 200 {
-			printer := models.NewErrorPrinter(body, status)
-			printer.Print()
+		if len(args) == 0 {
+			fmt.Println("inform cluster name, e.g. './mystack create cluster mycluster'")
 			return
 		}
 
-		fmt.Printf("Cluster '%s' successfully created\n", clusterName)
-
-		bodyJSON := make(map[string]map[string][]string)
-		err = json.Unmarshal(body, &bodyJSON)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		printer := &models.RoutePrinter{
-			Domain: config.ControllerHost,
-			Apps:   bodyJSON["domains"],
-		}
-		printer.Print()
+		clusterName := args[0]
+		createCluster(l, clusterName, config)
 	},
 }
 

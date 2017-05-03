@@ -51,11 +51,26 @@ var createConfigCmd = &cobra.Command{
 		if err == nil {
 			config = c
 		} else {
-			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run ./mystack login")
+			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run './mystack login'")
 		}
 
+		if filePath == "" {
+			fmt.Println("inform config file, e.g. './mystack create config myconfig -f /path/to/config/file'")
+			return
+		}
+		if len(args) == 0 {
+			fmt.Println("inform cluster name, e.g. './mystack create config myconfig'")
+			return
+		}
+
+		clusterName := args[0]
+
 		client := models.NewMyStackHTTPClient(config)
-		createClusterURL := fmt.Sprintf("%s/cluster-configs/%s/create", c.ControllerURL, clusterName)
+		createClusterURL := fmt.Sprintf(
+			"%s/cluster-configs/%s/create",
+			config.ControllerURL,
+			clusterName,
+		)
 		bodyJSON, err := createBody()
 		if err != nil {
 			cmdL.WithError(err).Fatalf("error during reading file path '%s'", filePath)
@@ -63,7 +78,7 @@ var createConfigCmd = &cobra.Command{
 
 		body, status, err := client.Put(createClusterURL, bodyJSON)
 		if err != nil {
-			msg := fmt.Sprintf("Failed to execute request to '%s'", c.ControllerURL)
+			msg := fmt.Sprintf("Failed to execute request to '%s'", config.ControllerURL)
 			cmdL.WithError(err).Fatal(msg)
 			os.Exit(1)
 		}
