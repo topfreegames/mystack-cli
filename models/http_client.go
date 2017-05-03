@@ -29,7 +29,7 @@ func NewMyStackHTTPClient(config *Config) *MyStackHTTPClient {
 	}
 
 	h.client = &http.Client{
-		Timeout: 10 * time.Minute,
+		Timeout: 20 * time.Minute,
 	}
 
 	return h
