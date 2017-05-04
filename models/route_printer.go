@@ -10,6 +10,7 @@ package models
 import (
 	"fmt"
 	"os"
+	"sort"
 	"text/tabwriter"
 )
 
@@ -23,8 +24,18 @@ type RoutePrinter struct {
 func (j *RoutePrinter) Print() {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
+	names := make([]string, len(j.Apps))
+	i := 0
+	for name, _ := range j.Apps {
+		names[i] = name
+		i = i + 1
+	}
+
+	sort.Strings(names)
+
 	fmt.Fprintln(w, "APP ROUTES")
-	for name, domains := range j.Apps {
+	for _, name := range names {
+		domains := j.Apps[name]
 		fmt.Fprintf(w, "%s:\t%v\n", name, domains)
 	}
 
