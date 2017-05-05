@@ -45,9 +45,10 @@ func getCluster(l *logrus.Entry, clusterName string, config *models.Config) {
 
 // getClusterCmd represents the get_cluster command
 var getClusterCmd = &cobra.Command{
-	Use:   "cluster",
+	Use:   "cluster CLUSTER_NAME",
 	Short: "list or get clusters",
-	Long:  `list or get cluster in mystack`,
+	Long: `list or get cluster in mystack.
+CLUSTER_NAME is a necessary parameter used to fetch specific cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 

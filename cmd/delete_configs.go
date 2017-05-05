@@ -20,10 +20,12 @@ import (
 
 // delete_configsCmd represents the delete_configs command
 var deleteConfigsCmd = &cobra.Command{
-	Use:   "configs",
-	Short: "deletes configs",
-	Long:  `deletes configs in mystack`,
-	Run:   DeleteConfigRun,
+	Use:   "configs CLUSTER_CONFIG [CLUSTER_CONFIGS...]",
+	Short: "deletes one or more configs in mystack.",
+	Long: `deletes one or more configs in mystack.
+CLUSTER_CONFIG is a necessary parameter used to identify specific config.
+It's possible to pass one or more config names and they will all be deleted.`,
+	Run: DeleteConfigRun,
 }
 
 func init() {

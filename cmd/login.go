@@ -20,9 +20,10 @@ var quiet bool
 var controllerURL string
 
 var loginCmd = &cobra.Command{
-	Use:   "login",
+	Use:   "login CONTROLLER_URL",
 	Short: "login on mystack",
-	Long:  "First login on mystack to get access on your personal stack of services running on Kubernetes",
+	Long: `First login on mystack to get access on your personal stack of services running on Kubernetes.
+CONTROLLER_URL is a necessary parameter used to connect to Mystack-Controller.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 

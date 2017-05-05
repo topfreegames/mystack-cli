@@ -36,9 +36,10 @@ func createBody() (map[string]interface{}, error) {
 
 // configCmd represents the config command
 var createConfigCmd = &cobra.Command{
-	Use:   "config",
+	Use:   "config CLUSTER_CONFIG",
 	Short: "creates a cluster config",
-	Long:  `creates a cluster config in mystack`,
+	Long: `creates a cluster config in mystack.
+CLUSTER_CONFIG is a necessary parameter used to name cluster config.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 

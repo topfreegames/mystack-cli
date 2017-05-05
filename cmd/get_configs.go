@@ -20,10 +20,13 @@ import (
 
 // getConfigsCmd represents the configs command
 var getConfigsCmd = &cobra.Command{
-	Use:   "configs",
+	Use:   "configs [CLUSTER_CONFIG...]",
 	Short: "list or get cluster configs",
-	Long:  `list or get a cluster configs from mystack`,
-	Run:   GetConfigRun,
+	Long: `list or get cluster configs from mystack.
+CLUSTER_CONFIG is used to fetch specific cluster.
+It's possible to pass one or more cluster names and they will be all fetched.
+If no CLUSTER_CONFIG is passed, a list with the saved cluster configs is returned.`,
+	Run: GetConfigRun,
 }
 
 func init() {
