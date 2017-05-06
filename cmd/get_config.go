@@ -9,6 +9,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -24,7 +25,13 @@ func getConfig(l *logrus.Entry, clusterName string, config *models.Config) {
 		l.Fatal(err.Error())
 	}
 
-	if status != 200 {
+	if status == http.StatusNotFound {
+		title := fmt.Sprintf("config '%s' was not found", clusterName)
+		msg := fmt.Sprintf("you have to run './mystack create config %s'", clusterName)
+		printer := models.NewStrLogPrinter(msg, title)
+		printer.Print()
+		return
+	} else if status != http.StatusOK {
 		printer := models.NewErrorPrinter(body, status)
 		printer.Print()
 		return
@@ -32,11 +39,7 @@ func getConfig(l *logrus.Entry, clusterName string, config *models.Config) {
 
 	bodyJSON := make(map[string]interface{})
 	json.Unmarshal(body, &bodyJSON)
-	printer := &models.ObjPrinter{
-		Title:       "CLUSTER-CONFIG",
-		ClusterName: clusterName,
-		Obj:         bodyJSON["yaml"],
-	}
+	printer := models.NewStrLogPrinter(bodyJSON["yaml"].(string), fmt.Sprintf("config '%s'", clusterName))
 	printer.Print()
 }
 
@@ -48,7 +51,7 @@ func listConfigs(l *logrus.Entry, config *models.Config) {
 		log.Fatal(err.Error())
 	}
 
-	if status != 200 {
+	if status != http.StatusOK {
 		printer := models.NewErrorPrinter(body, status)
 		printer.Print()
 		return

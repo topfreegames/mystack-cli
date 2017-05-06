@@ -8,6 +8,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -30,7 +31,10 @@ func deleteConfig(l *logrus.Entry, clusterName string, config *models.Config) {
 		os.Exit(1)
 	}
 
-	if status != 200 && status != 201 {
+	if status != http.StatusNotFound {
+		fmt.Printf("config '%s' was not found\n", clusterName)
+		return
+	} else if status != http.StatusOK && status != http.StatusCreated {
 		printer := models.NewErrorPrinter(body, status)
 		printer.Print()
 		return

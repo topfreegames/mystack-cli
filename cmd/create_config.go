@@ -9,6 +9,7 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -52,7 +53,8 @@ CLUSTER_CONFIG is a necessary parameter used to name cluster config.`,
 		if err == nil {
 			config = c
 		} else {
-			cmdL.WithError(err).Fatal("no mystack config file found, you may need to run './mystack login'")
+			fmt.Println("no mystack config file found, you may need to run './mystack login'")
+			return
 		}
 
 		if filePath == "" {
@@ -74,7 +76,8 @@ CLUSTER_CONFIG is a necessary parameter used to name cluster config.`,
 		)
 		bodyJSON, err := createBody()
 		if err != nil {
-			cmdL.WithError(err).Fatalf("error during reading file path '%s'", filePath)
+			fmt.Printf("Error: %s\n", err.Error())
+			return
 		}
 
 		body, status, err := client.Put(createClusterURL, bodyJSON)
@@ -84,7 +87,13 @@ CLUSTER_CONFIG is a necessary parameter used to name cluster config.`,
 			os.Exit(1)
 		}
 
-		if status != 200 && status != 201 {
+		if status == http.StatusConflict {
+			title := fmt.Sprintf("config '%s' already exists", clusterName)
+			msg := fmt.Sprintf("to update it, you have to run './mystack delete config %s' and create a new one", clusterName)
+			printer := models.NewStrLogPrinter(msg, title)
+			printer.Print()
+			return
+		} else if status != http.StatusOK && status != http.StatusCreated {
 			printer := models.NewErrorPrinter(body, status)
 			printer.Print()
 			return

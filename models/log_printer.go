@@ -24,6 +24,14 @@ func NewLogPrinter(body []byte, title string) *LogPrinter {
 	}
 }
 
+//NewLogPrinter is the LogPrinter ctor
+func NewStrLogPrinter(body string, title string) *LogPrinter {
+	return &LogPrinter{
+		Message: body,
+		Title:   title,
+	}
+}
+
 //Print prints log
 func (l *LogPrinter) Print() {
 	fmt.Println(l.Title)

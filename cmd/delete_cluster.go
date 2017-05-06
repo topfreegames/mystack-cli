@@ -8,6 +8,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -27,7 +28,10 @@ func deleteCluster(l *logrus.Entry, clusterName string, config *models.Config) {
 		l.Fatal(err.Error())
 	}
 
-	if status != 200 {
+	if status == http.StatusNotFound {
+		fmt.Printf("cluster '%s' was not found\n", clusterName)
+		return
+	} else if status != http.StatusOK {
 		printer := models.NewErrorPrinter(body, status)
 		printer.Print()
 		return
