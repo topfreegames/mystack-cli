@@ -21,10 +21,10 @@ func getLog(l *logrus.Entry, app string, config *models.Config) {
 	var url string
 	client := models.NewMyStackHTTPClient(config)
 	if follow {
-		url = fmt.Sprintf("%s/logs/apps/%s?follow=true", config.LoggerHost, app)
+		url = fmt.Sprintf("http://%s/logs/apps/%s?follow=true", config.LoggerHost, app)
 		client.GetToStdOut(url, config.LoggerHost)
 	} else {
-		url = fmt.Sprintf("%s/logs/apps/%s", config.LoggerHost, app)
+		url = fmt.Sprintf("http://%s/logs/apps/%s", config.LoggerHost, app)
 		body, status, err := client.Get(url, config.LoggerHost)
 		if err != nil {
 			log.Fatal(err.Error())
