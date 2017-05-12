@@ -1,4 +1,6 @@
 MY_IP=`ifconfig | grep --color=none -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep --color=none -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
+BIN_PATH = "./bin"
+BIN_NAME = "mystack"
 
 setup: setup-hooks
 	@go get -u github.com/golang/dep...
@@ -11,6 +13,19 @@ setup-hooks:
 
 build:
 	@go build -o ./bin/mystack main.go
+
+build-all-platforms:
+	@mkdir -p ${BIN_PATH}
+	@echo "Building for linux-i386..."
+	@env GOOS=linux GOARCH=386 go build -o ${BIN_PATH}/${BIN_NAME}-linux-i386
+	@echo "Building for linux-x86_64..."
+	@env GOOS=linux GOARCH=amd64 go build -o ${BIN_PATH}/${BIN_NAME}-linux-x86_64
+	@echo "Building for darwin-i386..."
+	@env GOOS=darwin GOARCH=386 go build -o ${BIN_PATH}/${BIN_NAME}-darwin-i386
+	@echo "Building for darwin-x86_64..."
+	@env GOOS=darwin GOARCH=amd64 go build -o ${BIN_PATH}/${BIN_NAME}-darwin-x86_64
+	@echo "Building for win-x86_64..."
+	@env GOOS=windows GOARCH=amd64 go build -o ${BIN_PATH}/${BIN_NAME}-win-x86_64
 
 unit: clear-coverage-profiles unit-run gather-unit-profiles
 
