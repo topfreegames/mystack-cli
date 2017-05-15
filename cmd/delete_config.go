@@ -31,7 +31,7 @@ func deleteConfig(l *logrus.Entry, clusterName string, config *models.Config) {
 		os.Exit(1)
 	}
 
-	if status != http.StatusNotFound {
+	if status == http.StatusNotFound {
 		fmt.Printf("config '%s' was not found\n", clusterName)
 		return
 	} else if status != http.StatusOK && status != http.StatusCreated {
