@@ -65,7 +65,8 @@ var dnsCmd = &cobra.Command{
 
 		clusterName := args[0]
 
-		c, err := models.ReadConfig(environment)
+		fs := models.NewRealFS()
+		c, err := models.ReadConfig(fs, environment)
 		if err == nil {
 			config = c
 		} else {

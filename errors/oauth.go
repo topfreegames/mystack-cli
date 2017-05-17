@@ -16,13 +16,15 @@ import (
 type OAuthError struct {
 	Model   string
 	Message string
+	Status  int
 }
 
 //NewOAuthError ctor
-func NewOAuthError(model, message string) *OAuthError {
+func NewOAuthError(model, message string, status int) *OAuthError {
 	return &OAuthError{
 		Model:   model,
 		Message: message,
+		Status:  status,
 	}
 }
 
@@ -33,8 +35,8 @@ func (e *OAuthError) Error() string {
 //Serialize returns the error serialized
 func (e *OAuthError) Serialize() []byte {
 	g, _ := json.Marshal(map[string]interface{}{
-		"code":        "OFF-002",
-		"error":       fmt.Sprintf("Conflicted%sError", e.Model),
+		"code":        "MST-002",
+		"error":       fmt.Sprintf("%sError", e.Model),
 		"description": e.Error(),
 	})
 

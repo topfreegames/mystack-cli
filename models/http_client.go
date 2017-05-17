@@ -1,4 +1,4 @@
-// mystack
+// mystack-cli
 // https://github.com/topfreegames/mystack-cli
 //
 // Licensed under the MIT license:
@@ -106,8 +106,10 @@ func (c *MyStackHTTPClient) Put(url string, body map[string]interface{}) ([]byte
 }
 
 func (c *MyStackHTTPClient) addAuthHeader(req *http.Request, host string) {
-	auth := fmt.Sprintf("Bearer %s", c.config.Token)
-	req.Header.Add("Authorization", auth)
+	if c.config != nil {
+		auth := fmt.Sprintf("Bearer %s", c.config.Token)
+		req.Header.Add("Authorization", auth)
+	}
 
 	if host != "" {
 		req.Host = host

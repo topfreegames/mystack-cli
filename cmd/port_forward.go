@@ -1,5 +1,5 @@
-// mystack-controller api
-// https://github.com/topfreegames/mystack-controller
+// mystack-cli
+// https://github.com/topfreegames/mystack-cli
 //
 // Licensed under the MIT license:
 // http://www.opensource.org/licenses/mit-license
@@ -123,7 +123,8 @@ var portForwardCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
-		c, err := models.ReadConfig(environment)
+		fs := models.NewRealFS()
+		c, err := models.ReadConfig(fs, environment)
 		if err == nil {
 			config = c
 		} else {

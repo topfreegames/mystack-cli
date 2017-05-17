@@ -56,7 +56,7 @@ func NewApp(host string, port int, debug bool, logger logrus.FieldLogger, env, c
 func (a *App) getRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/google-callback", Chain(
-		&OAuthCallbackHandler{App: a},
+		NewOAuthCallbackHandler(a, &models.RealFS{}, models.NewMyStackHTTPClient(nil)),
 		&LoggingMiddleware{App: a},
 		&VersionMiddleware{},
 	)).Methods("GET").Name("oauth2")

@@ -49,7 +49,8 @@ CLUSTER_CONFIG is a necessary parameter used to name cluster config.`,
 			"operation": "Run",
 		})
 
-		c, err := models.ReadConfig(environment)
+		fs := models.NewRealFS()
+		c, err := models.ReadConfig(fs, environment)
 		if err == nil {
 			config = c
 		} else {

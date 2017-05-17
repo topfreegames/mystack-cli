@@ -31,37 +31,53 @@ const index = `
 
 //OAuthCallbackHandler handles the callback after user approves/deny auth
 type OAuthCallbackHandler struct {
-	App *App
+	app    *App
+	fs     models.FileSystem
+	client models.ClientInterface
+}
+
+func NewOAuthCallbackHandler(
+	app *App,
+	fs models.FileSystem,
+	client models.ClientInterface,
+) *OAuthCallbackHandler {
+	return &OAuthCallbackHandler{
+		app:    app,
+		fs:     fs,
+		client: client,
+	}
 }
 
 //ServeHTTP method
 func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	state := r.FormValue("state")
 	code := r.FormValue("code")
-	l := loggerFromContext(r.Context())
 
+	l := loggerFromContext(r.Context())
 	l.Debugf("Returned state %s and code %s", state, code)
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	err := models.SaveAccessToken(
-		state,
-		code,
-		o.App.Login.OAuthState,
-		o.App.env,
-		o.App.Login.ControllerURL,
-		o.App.Hosts,
+		state, code, o.app.Login.OAuthState, o.app.env, o.app.Login.ControllerURL,
+		o.app.Hosts,
+		o.fs,
+		o.client,
 	)
 	if err != nil {
 		if err, ok := err.(*errors.OAuthError); ok {
 			l.Error(err.Serialize())
+			o.app.HandleError(w, err.Status, "", err)
+			return
 		}
 
 		l.Error(err)
+		o.app.HandleError(w, http.StatusInternalServerError, "unexpected authentication error", err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, index)
 
-	o.App.ServerControl.CloseServer <- true
+	o.app.ServerControl.CloseServer <- true
 }

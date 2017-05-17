@@ -59,7 +59,8 @@ CLUSTER_NAME is a necessary parameter used to fetch specific cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := createLog()
 
-		c, err := models.ReadConfig(environment)
+		fs := models.NewRealFS()
+		c, err := models.ReadConfig(fs, environment)
 		if err == nil {
 			config = c
 		} else {

@@ -51,7 +51,8 @@ func DeleteConfigRun(cmd *cobra.Command, args []string) {
 		"operation": "Run",
 	})
 
-	c, err := models.ReadConfig(environment)
+	fs := models.NewRealFS()
+	c, err := models.ReadConfig(fs, environment)
 	if err == nil {
 		config = c
 	} else {

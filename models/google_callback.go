@@ -10,10 +10,10 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/topfreegames/mystack-cli/errors"
-	"io/ioutil"
 	"net"
 	"net/http"
+
+	"github.com/topfreegames/mystack-cli/errors"
 )
 
 //ServerControl starts a go routine to end the server after callback
@@ -43,34 +43,32 @@ func NewServerControl(listener net.Listener) *ServerControl {
 }
 
 //SaveAccessToken get access token from authorization code and saves locally
-func SaveAccessToken(state, code, expectedState, env, controllerURL string, hosts map[string]string) error {
+func SaveAccessToken(
+	state, code, expectedState, env, controllerURL string,
+	hosts map[string]string,
+	fs FileSystem,
+	client ClientInterface,
+) error {
 	if state != expectedState {
-		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("invalid oauth state, expected '%s', got '%s'", expectedState, state))
+		err := errors.NewOAuthError("GoogleCallback", fmt.Sprintf("invalid oauth state, expected '%s', got '%s'", expectedState, state), http.StatusBadRequest)
 		return err
 	}
 
 	url := fmt.Sprintf("%s/access?code=%s", controllerURL, code)
-	req, err := http.NewRequest("GET", url, nil)
-	req.Host = hosts["controller"]
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, status, err := client.Get(url, hosts["controller"])
 	if err != nil {
 		return err
 	}
 
-	defer resp.Body.Close()
-	var bodyObj map[string]interface{}
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if resp.StatusCode != 200 {
-		err = fmt.Errorf("Status: %d\nError: %s", resp.StatusCode, string(body))
-		return err
+	if status != http.StatusOK {
+		return errors.NewOAuthError("GoogleCallback", string(resp), status)
 	}
-	json.Unmarshal(body, &bodyObj)
+
+	var bodyObj map[string]interface{}
+	json.Unmarshal(resp, &bodyObj)
 	token := bodyObj["token"].(string)
 
 	c := NewConfig(env, token, controllerURL, hosts)
-	err = c.Write()
+	err = c.Write(fs)
 	return err
 }

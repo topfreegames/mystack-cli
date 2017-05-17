@@ -1,3 +1,10 @@
+// mystack-cli
+// https://github.com/topfreegames/mystack-cli
+//
+// Licensed under the MIT license:
+// http://www.opensource.org/licenses/mit-license
+// Copyright © 2016 Top Free Games <backend@tfgco.com>
+
 package models
 
 import (
@@ -31,12 +38,12 @@ func NewConfig(env, token, controllerURL string, hosts map[string]string) *Confi
 }
 
 // ReadConfig from file
-func ReadConfig(env string) (*Config, error) {
+func ReadConfig(fs FileSystem, env string) (*Config, error) {
 	cfgPath, err := getConfigPathForEnv(env)
 	if err != nil {
 		return nil, err
 	}
-	if _, err := os.Stat(cfgPath); os.IsNotExist(err) {
+	if _, err := fs.Stat(cfgPath); fs.IsNotExist(err) {
 		return nil, err
 	}
 	bts, err := ioutil.ReadFile(cfgPath)
@@ -72,7 +79,7 @@ func getConfigPathForEnv(env string) (string, error) {
 }
 
 // Write the config file to disk
-func (c *Config) Write() error {
+func (c *Config) Write(fs FileSystem) error {
 	cfgPath, err := getConfigPathForEnv(c.Env)
 	if err != nil {
 		return err
@@ -85,11 +92,15 @@ func (c *Config) Write() error {
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll(cfgDir, os.ModePerm)
+	err = fs.MkdirAll(cfgDir, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(cfgPath, cfg, 0644)
+	file, err := fs.Create(cfgPath)
+	if err != nil {
+		return err
+	}
+	_, err = file.Write(cfg)
 	if err != nil {
 		return err
 	}

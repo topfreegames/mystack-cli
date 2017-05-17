@@ -75,7 +75,8 @@ func listConfigs(l *logrus.Entry, config *models.Config) {
 func GetConfigRun(cmd *cobra.Command, args []string) {
 	log := createLog()
 
-	c, err := models.ReadConfig(environment)
+	fs := models.NewRealFS()
+	c, err := models.ReadConfig(fs, environment)
 	if err == nil {
 		config = c
 	} else {

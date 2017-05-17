@@ -14,16 +14,16 @@ import (
 
 // VersionMiddleware adds the version to the request
 type VersionMiddleware struct {
-	next http.Handler
+	Next http.Handler
 }
 
 //ServeHTTP method
 func (m *VersionMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Offers-Version", metadata.Version)
-	m.next.ServeHTTP(w, r)
+	m.Next.ServeHTTP(w, r)
 }
 
 //SetNext handler
 func (m *VersionMiddleware) SetNext(next http.Handler) {
-	m.next = next
+	m.Next = next
 }
