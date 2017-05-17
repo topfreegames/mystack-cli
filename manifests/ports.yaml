@@ -1,0 +1,7 @@
+ports:
+  - name: app1
+    port: 30000
+  - name: app2
+    port: 30001
+  - name: svc1
+    port: 30002

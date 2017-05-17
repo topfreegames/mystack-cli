@@ -36,7 +36,11 @@ mystack logs svc-name
 ```
 mystack logs -f svc-name
 ```
-* Bind local ports to services like dabatases
+* Bind local ports to services
 ```
 mystack port-forward mycluster
+```
+* Save default ports on a file and bind services to them
+```
+mystack port-forward mycluster -p manifests/ports.yaml
 ```
