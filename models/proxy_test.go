@@ -53,7 +53,6 @@ var _ = Describe("Proxy", func() {
 				defer func() {
 					select {
 					case <-close:
-						fmt.Println("close singnal")
 						conn.Close()
 					}
 				}()

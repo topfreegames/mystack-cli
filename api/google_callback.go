@@ -15,7 +15,7 @@ import (
 	"github.com/topfreegames/mystack-cli/models"
 )
 
-const index = `
+const Index = `
 <!doctype html>
 <html>
 <head>
@@ -25,6 +25,20 @@ const index = `
 <body>
   <h1>Thanks for logging in</h1>
   You can go back to your terminal
+</body>
+</html>
+`
+
+const UnauthorizedIndex = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mystack</title>
+</head>
+<body>
+  <h1>Unauthorized</h1>
+  Your email is not authorized to use Mystack
 </body>
 </html>
 `
@@ -65,9 +79,10 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		o.client,
 	)
 	if err != nil {
-		if err, ok := err.(*errors.OAuthError); ok {
-			l.Error(err.Serialize())
-			o.app.HandleError(w, err.Status, "", err)
+		if _, ok := err.(*errors.OAuthError); ok {
+			w.WriteHeader(http.StatusOK)
+			io.WriteString(w, UnauthorizedIndex)
+			o.app.ServerControl.CloseServer <- true
 			return
 		}
 
@@ -77,7 +92,7 @@ func (o *OAuthCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, index)
+	io.WriteString(w, Index)
 
 	o.app.ServerControl.CloseServer <- true
 }

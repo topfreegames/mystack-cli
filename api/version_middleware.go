@@ -19,7 +19,7 @@ type VersionMiddleware struct {
 
 //ServeHTTP method
 func (m *VersionMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("X-Offers-Version", metadata.Version)
+	w.Header().Set("X-Mystack-Version", metadata.Version)
 	m.Next.ServeHTTP(w, r)
 }
 

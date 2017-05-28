@@ -58,20 +58,8 @@ var _ = Describe("GoogleCallback", func() {
 			versionMid.ServeHTTP(response, request)
 
 			Expect(response.Header().Get("Content-Type")).To(Equal("text/html; charset=utf-8"))
-			Expect(response.Header().Get("X-Offers-Version")).To(Equal(metadata.Version))
-			Expect(response.Body.String()).To(Equal(`
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Mystack</title>
-</head>
-<body>
-  <h1>Thanks for logging in</h1>
-  You can go back to your terminal
-</body>
-</html>
-`))
+			Expect(response.Header().Get("X-Mystack-Version")).To(Equal(metadata.Version))
+			Expect(response.Body.String()).To(Equal(Index))
 
 			exists, err := afero.DirExists(fs.AppFS, mystackDir)
 			Expect(err).NotTo(HaveOccurred())
@@ -97,19 +85,8 @@ var _ = Describe("GoogleCallback", func() {
 			logMid := &LoggingMiddleware{App: app, Next: o}
 			logMid.ServeHTTP(response, request)
 
-			Expect(response.Header().Get("Content-Type")).To(Equal("application/json"))
-
-			obj := make(map[string]interface{})
-			err := json.Unmarshal(response.Body.Bytes(), &obj)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(obj["error"]).To(Equal("GoogleCallbackError"))
-			Expect(obj["code"]).To(Equal("MST-002"))
-
-			msg := fmt.Sprintf(
-				"GoogleCallback could not authenticate due to: invalid oauth state, expected '%s', got 'state'",
-				app.Login.OAuthState,
-			)
-			Expect(obj["description"]).To(Equal(msg))
+			Expect(response.Header().Get("Content-Type")).To(Equal("text/html; charset=utf-8"))
+			Expect(response.Body.String()).To(Equal(UnauthorizedIndex))
 		})
 
 		It("should error status is 400", func() {
@@ -129,14 +106,8 @@ var _ = Describe("GoogleCallback", func() {
 			logMid := &LoggingMiddleware{App: app, Next: o}
 			logMid.ServeHTTP(response, request)
 
-			Expect(response.Header().Get("Content-Type")).To(Equal("application/json"))
-
-			obj := make(map[string]interface{})
-			err := json.Unmarshal(response.Body.Bytes(), &obj)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(obj["error"]).To(Equal("GoogleCallbackError"))
-			Expect(obj["code"]).To(Equal("MST-002"))
-			Expect(obj["description"]).To(Equal("GoogleCallback could not authenticate due to: error: bad request"))
+			Expect(response.Header().Get("Content-Type")).To(Equal("text/html; charset=utf-8"))
+			Expect(response.Body.String()).To(Equal(UnauthorizedIndex))
 		})
 	})
 })
