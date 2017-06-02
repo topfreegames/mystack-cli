@@ -8,4 +8,4 @@
 package metadata
 
 //Version of the mystack cli
-var Version = "1.2.1"
+var Version = "1.2.2"
