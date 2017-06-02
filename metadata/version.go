@@ -7,5 +7,5 @@
 
 package metadata
 
-//Version of the Offers API
-var Version = "0.1.0"
+//Version of the mystack cli
+var Version = "1.2.1"
